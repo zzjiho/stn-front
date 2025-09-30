@@ -13,4 +13,8 @@ export class ApiException extends Error {
 
     Object.setPrototypeOf(this, ApiException.prototype);
   }
+
+    static isApiException(error: unknown): error is ApiException {
+        return error instanceof ApiException;
+    }
 }
