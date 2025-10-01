@@ -1,7 +1,6 @@
-import React from 'react';
 import {Box, Checkbox, IconButton} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type {GridColDef, GridRowParams} from '@mui/x-data-grid';
+import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 
 interface DeviceTableColumnsProps {
     onSelectRow: (deviceId: number, checked: boolean) => void;
@@ -33,7 +32,7 @@ export const createDeviceTableColumns = ({
                 onChange={(e) => onSelectAll(e.target.checked)}
             />
         ),
-        renderCell: (params: GridRowParams) => (
+        renderCell: (params: GridRenderCellParams) => (
             <Checkbox
                 checked={isRowSelected(params.row.deviceId)}
                 onChange={(e) => onSelectRow(params.row.deviceId, e.target.checked)}
@@ -55,7 +54,7 @@ export const createDeviceTableColumns = ({
         field: 'actions',
         headerName: 'Actions',
         width: 120,
-        renderCell: (params: GridRowParams) => (
+        renderCell: (params: GridRenderCellParams) => (
             <Box>
                 <IconButton
                     onClick={() => onDeleteDevice(params.row.deviceId)}
