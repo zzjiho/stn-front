@@ -77,10 +77,7 @@ export default function LogManagementPage() {
     };
 
     const handleDeleteLog = async (usageId: number) => {
-        const resultAction = await dispatch(deleteLogAsync(usageId));
-        if (deleteLogAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchLogsAsync({page: currentPageNo, size: sizePerPage}));
-        }
+        await dispatch(deleteLogAsync(usageId));
     };
 
     const handleBulkDelete = async () => {
@@ -89,7 +86,6 @@ export default function LogManagementPage() {
                 await dispatch(deleteLogAsync(Number(usageId)));
             }
             clearSelection();
-            dispatch(fetchLogsAsync({page: currentPageNo, size: sizePerPage}));
         }
     };
 
