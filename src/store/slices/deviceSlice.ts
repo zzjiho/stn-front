@@ -113,9 +113,9 @@ export const deleteDeviceAsync = createAsyncThunk(
 );
 
 const deviceSlice = createSlice({
-  name: 'device',
-  initialState,
-  reducers: {
+  name: 'device', // slice 이름
+  initialState, // 상태 초기값
+  reducers: { // 동기적인 상태 변경 로직
     clearError: (state) => {
       state.error = null;
     },
@@ -127,7 +127,7 @@ const deviceSlice = createSlice({
       state.sizePerPage = action.payload.size;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder) => { // 비동기적인 상태 변경 로직
     builder
       // Fetch devices
       .addCase(fetchDevicesAsync.pending, (state) => {
