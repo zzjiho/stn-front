@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import authSlice from './slices/authSlice';
 import deviceSlice from './slices/deviceSlice';
+import logSlice from './slices/logSlice';
+
 
 export const store = configureStore({
   reducer: {
     auth: authSlice,        // 로그인 정보
     device: deviceSlice,    // 디바이스 정보
-
+    log: logSlice,          // 디바이스 사용량(률) 정보
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
