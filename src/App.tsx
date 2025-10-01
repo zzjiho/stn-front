@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout, ProtectedRoute } from './components';
+import DashboardPage from './pages/DashboardPage';
+import DeviceManagementPage from './pages/DeviceManagementPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 
@@ -12,6 +14,8 @@ function App() {
 
                 <Route path="/" element={<DashboardLayout />}>
                     <Route element={<ProtectedRoute />}>
+                        <Route path="dashboard" element={<DashboardPage />} />
+                        <Route path="devices" element={<DeviceManagementPage />} />
                         <Route index element={<Navigate to="/dashboard" />} />
                     </Route>
                 </Route>
