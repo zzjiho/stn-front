@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import type { LogEntry } from '../types/index';
+import type { LogResponse } from '../types/index';
 
-export const useLogSelection = (logs: LogEntry[]) => {
+export const useLogSelection = (logs: LogResponse[]) => {
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
     const handleSelectRow = (usageId: number, checked: boolean) => {
@@ -14,7 +14,7 @@ export const useLogSelection = (logs: LogEntry[]) => {
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            setSelectedRows(logs.map(log => log.usageId));
+            setSelectedRows(logs?.map(log => log.usageId) || []);
         } else {
             setSelectedRows([]);
         }
@@ -25,11 +25,11 @@ export const useLogSelection = (logs: LogEntry[]) => {
     };
 
     const isAllSelected = () => {
-        return logs.length > 0 && selectedRows.length === logs.length;
+        return logs?.length > 0 && selectedRows.length === logs.length;
     };
 
     const isIndeterminate = () => {
-        return selectedRows.length > 0 && selectedRows.length < logs.length;
+        return selectedRows.length > 0 && selectedRows.length < (logs?.length || 0);
     };
 
     const clearSelection = () => {

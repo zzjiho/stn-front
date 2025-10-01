@@ -4,7 +4,7 @@ import {DataGrid} from '@mui/x-data-grid';
 import {useAppDispatch, useAppSelector} from '../store';
 import {fetchAllDevicesAsync} from '../store/slices/deviceSlice';
 import {clearError, createLogAsync, deleteLogAsync, fetchLogsAsync, updateLogAsync} from '../store/slices/logSlice';
-import type {LogEntry} from '../types/index';
+import type {LogResponse} from '../types/index';
 import {useLogSelection} from '../hooks/useLogSelection';
 import {LogDialog, LogActions, createLogTableColumns} from '../components';
 
@@ -16,7 +16,7 @@ export default function LogManagementPage() {
 
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
+    const [editingLog, setEditingLog] = useState<LogResponse | null>(null);
 
     const {
         selectedRows,
@@ -104,7 +104,7 @@ export default function LogManagementPage() {
         }
     };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
         dispatch(fetchLogsAsync({page, size: sizePerPage}));
     };
 

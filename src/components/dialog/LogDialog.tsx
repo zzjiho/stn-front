@@ -16,7 +16,7 @@ import {
     Select,
     TextField
 } from '@mui/material';
-import type {LogEntry} from '../types/index';
+import type {LogResponse} from '../../types/index';
 
 interface LogDialogProps {
     open: boolean;
@@ -24,7 +24,7 @@ interface LogDialogProps {
     onSubmit: (logData: { deviceId: number; cpuUsage: number; memoryUsage: number; diskUsage: number }) => void;
     title: string;
     submitLabel: string;
-    log?: LogEntry | null;
+    log?: LogResponse | null;
     devices: Array<{ deviceId: number; title: string }>;
 }
 
