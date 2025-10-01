@@ -78,7 +78,7 @@ export interface UserStatusRequest {
 }
 
 // Log types
-export interface LogEntry {
+export interface LogResponse {
   usageId: number;
   deviceId: number;
   title: string;
@@ -94,6 +94,16 @@ export interface LogRequest {
   cpuUsage: number;
   memoryUsage: number;
   diskUsage: number;
+}
+
+export interface LogListResponse {
+  deviceUsages: LogResponse[];
+  currentPageNo: number;
+  sizePerPage: number;
+  totalCnt: number;
+  pageCnt: number;
+  prev: boolean;
+  next: boolean;
 }
 
 // Common types
