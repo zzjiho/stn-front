@@ -2,10 +2,9 @@
  * 테이블 컬럼 정의 분리
  */
 
-import React from 'react';
 import {Box, Checkbox, IconButton} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type {GridColDef, GridRowParams} from '@mui/x-data-grid';
+import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 
 interface LogTableColumnsProps {
     onSelectRow: (usageId: number, checked: boolean) => void;
@@ -37,7 +36,7 @@ export const createLogTableColumns = ({
                 onChange={(e) => onSelectAll(e.target.checked)}
             />
         ),
-        renderCell: (params: GridRowParams) => (
+        renderCell: (params: GridRenderCellParams) => (
             <Checkbox
                 checked={isRowSelected(params.row.usageId)}
                 onChange={(e) => onSelectRow(params.row.usageId, e.target.checked)}
@@ -60,7 +59,7 @@ export const createLogTableColumns = ({
         field: 'actions',
         headerName: 'Actions',
         width: 120,
-        renderCell: (params: GridRowParams) => (
+        renderCell: (params: GridRenderCellParams) => (
             <Box>
                 <IconButton
                     onClick={() => onDeleteLog(params.row.usageId)}

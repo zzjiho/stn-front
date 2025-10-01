@@ -7,7 +7,7 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import type { Device } from '../types/index';
+import type { Device } from '../../types/index';
 
 interface DeviceDialogProps {
     open: boolean;
