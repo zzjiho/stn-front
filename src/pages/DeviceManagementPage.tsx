@@ -1,115 +1,22 @@
-import React, {useEffect, useState} from 'react';
+/**
+ * 장치 관리 페이지
+ * - 장치 목록 조회, 추가, 수정, 삭제 기능 제공
+ */
 import {Alert, Box, Pagination, Typography} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
-import {useAppDispatch, useAppSelector} from '../store';
-import {
-    clearError,
-    createDeviceAsync,
-    deleteDeviceAsync,
-    fetchDevicesAsync,
-    updateDeviceAsync
-} from '../store/slices/deviceSlice';
-import type {Device} from '../types/index';
-import {useDeviceSelection} from '../hooks/useDeviceSelection';
-import {DeviceDialog, DeviceActions, createDeviceTableColumns} from '../components';
+import {createDeviceTableColumns, DeviceActions, DeviceDialog} from '../components';
+import {useDeviceManagement} from '../hooks/useDeviceManagement';
 
 export default function DeviceManagementPage() {
-    const dispatch = useAppDispatch();
-    const {
-        devices,
-        isLoading,
-        error,
-        currentPageNo,
-        sizePerPage,
-        totalCnt,
-    } = useAppSelector((state) => state.device);
-
-    const [addDialogOpen, setAddDialogOpen] = useState(false);
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [editingDevice, setEditingDevice] = useState<Device | null>(null);
-
-    const {
-        selectedRows,
-        handleSelectRow,
-        handleSelectAll,
-        isRowSelected,
-        isAllSelected,
-        isIndeterminate,
-        clearSelection,
-    } = useDeviceSelection(devices);
-
-    useEffect(() => {
-        dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
-    }, [dispatch, currentPageNo, sizePerPage]);
-
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => {
-                dispatch(clearError());
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [error, dispatch]);
-
-    const handleAddDevice = async (deviceData: { title: string; modelName: string }) => {
-        const resultAction = await dispatch(createDeviceAsync(deviceData));
-        if (createDeviceAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchDevicesAsync({page: 1, size: sizePerPage}));
-            setAddDialogOpen(false);
-        }
-    };
-
-    const handleEditDevice = async (deviceData: { title: string; modelName: string }) => {
-        if (!editingDevice) return;
-
-        const resultAction = await dispatch(updateDeviceAsync({
-            deviceId: editingDevice.deviceId,
-            deviceData
-        }));
-
-        if (updateDeviceAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
-            setEditDialogOpen(false);
-            setEditingDevice(null);
-            clearSelection();
-        }
-    };
-
-    const handleDeleteDevice = async (deviceId: number) => {
-        await dispatch(deleteDeviceAsync(deviceId));
-    };
-
-    const handleBulkDelete = async () => {
-        if (selectedRows.length > 0) {
-            for (const deviceId of selectedRows) {
-                await dispatch(deleteDeviceAsync(Number(deviceId)));
-            }
-            clearSelection();
-        }
-    };
-
-    const handleEditOpen = () => {
-        if (selectedRows.length === 1) {
-            const deviceId = Number(selectedRows[0]);
-            const device = devices.find(d => d.deviceId === deviceId);
-            if (device) {
-                setEditingDevice(device);
-                setEditDialogOpen(true);
-            }
-        }
-    };
-
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        dispatch(fetchDevicesAsync({page, size: sizePerPage}));
-    };
+    const dm = useDeviceManagement();
 
     const columns = createDeviceTableColumns({
-        onSelectRow: handleSelectRow,
-        onSelectAll: handleSelectAll,
-        onDeleteDevice: handleDeleteDevice,
-        isRowSelected,
-        isAllSelected,
-        isIndeterminate,
+        onSelectRow: dm.handleSelectRow,
+        onSelectAll: dm.handleSelectAll,
+        onDeleteDevice: dm.handleDeleteDevice,
+        isRowSelected: dm.isRowSelected,
+        isAllSelected: dm.isAllSelected,
+        isIndeterminate: dm.isIndeterminate,
     });
 
     return (
@@ -118,23 +25,23 @@ export default function DeviceManagementPage() {
                 장치 관리
             </Typography>
 
-            {error && (
+            {dm.error && (
                 <Alert severity="error" sx={{mb: 2}}>
-                    {error}
+                    {dm.error}
                 </Alert>
             )}
 
             <DeviceActions
-                selectedCount={selectedRows.length}
-                onAdd={() => setAddDialogOpen(true)}
-                onEdit={handleEditOpen}
-                onBulkDelete={handleBulkDelete}
+                selectedCount={dm.selectedRows.length}
+                onAdd={() => dm.setAddDialogOpen(true)}
+                onEdit={dm.handleEditOpen}
+                onBulkDelete={dm.handleBulkDelete}
             />
 
             <DataGrid
-                rows={devices}
+                rows={dm.devices}
                 columns={columns}
-                loading={isLoading}
+                loading={dm.isLoading}
                 getRowId={(row) => row.deviceId}
                 hideFooter
                 autoHeight
@@ -143,9 +50,9 @@ export default function DeviceManagementPage() {
 
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 2}}>
                 <Pagination
-                    count={Math.ceil(totalCnt / sizePerPage)}
-                    page={currentPageNo}
-                    onChange={handlePageChange}
+                    count={Math.ceil(dm.totalCnt / dm.sizePerPage)}
+                    page={dm.currentPageNo}
+                    onChange={dm.handlePageChange}
                     color="primary"
                     showFirstButton
                     showLastButton
@@ -153,23 +60,23 @@ export default function DeviceManagementPage() {
             </Box>
 
             <DeviceDialog
-                open={addDialogOpen}
-                onClose={() => setAddDialogOpen(false)}
-                onSubmit={handleAddDevice}
+                open={dm.addDialogOpen}
+                onClose={() => dm.setAddDialogOpen(false)}
+                onSubmit={dm.handleAddDevice}
                 title="새 장치 추가"
                 submitLabel="추가"
             />
 
             <DeviceDialog
-                open={editDialogOpen}
+                open={dm.editDialogOpen}
                 onClose={() => {
-                    setEditDialogOpen(false);
-                    setEditingDevice(null);
+                    dm.setEditDialogOpen(false);
+                    dm.setEditingDevice(null);
                 }}
-                onSubmit={handleEditDevice}
+                onSubmit={dm.handleEditDevice}
                 title="장치 수정"
                 submitLabel="수정"
-                device={editingDevice}
+                device={dm.editingDevice}
             />
         </Box>
     );
