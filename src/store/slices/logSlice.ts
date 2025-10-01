@@ -84,8 +84,8 @@ export const deleteLogAsync = createAsyncThunk(
     'log/deleteLog',
     async (usageId: number, {rejectWithValue}) => {
         try {
-            const response = await logService.deleteLog(usageId);
-            return response;
+            await logService.deleteLog(usageId);
+            return usageId;
         } catch (error) {
             if (ApiException.isApiException(error)) {
                 return rejectWithValue(error.message);
@@ -157,8 +157,9 @@ const logSlice = createSlice({
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(deleteLogAsync.fulfilled, (state) => {
+            .addCase(deleteLogAsync.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.logs = state.logs.filter(log => log.usageId !== action.payload);
             })
             .addCase(deleteLogAsync.rejected, (state, action) => {
                 state.isLoading = false;

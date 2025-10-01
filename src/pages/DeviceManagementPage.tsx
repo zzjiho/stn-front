@@ -76,10 +76,7 @@ export default function DeviceManagementPage() {
     };
 
     const handleDeleteDevice = async (deviceId: number) => {
-        const resultAction = await dispatch(deleteDeviceAsync(deviceId));
-        if (deleteDeviceAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
-        }
+        await dispatch(deleteDeviceAsync(deviceId));
     };
 
     const handleBulkDelete = async () => {
@@ -88,7 +85,6 @@ export default function DeviceManagementPage() {
                 await dispatch(deleteDeviceAsync(Number(deviceId)));
             }
             clearSelection();
-            dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
         }
     };
 
