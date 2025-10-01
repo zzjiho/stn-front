@@ -1,0 +1,1 @@
+export { createDeviceTableColumns } from './DeviceTableColumns';

@@ -130,7 +130,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.28.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.28.2", "@babel/runtime@^7.28.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
   version "7.28.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
   integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
@@ -608,6 +608,38 @@
     clsx "^2.1.1"
     prop-types "^15.8.1"
     react-is "^19.1.1"
+
+"@mui/x-data-grid@^8.12.1":
+  version "8.12.1"
+  resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-8.12.1.tgz#be852c1e78ae657bbcbe179e17936c02e74f30e8"
+  integrity sha512-IfyV2jhPX6YQwpqxUD5jiy7fNbGIi7D2nCRIwK+lwY5m+I3lH6MFZyeDvZKSYOYT46/A127TmhCEEca/uPlh7Q==
+  dependencies:
+    "@babel/runtime" "^7.28.2"
+    "@mui/utils" "^7.3.2"
+    "@mui/x-internals" "8.12.0"
+    "@mui/x-virtualizer" "0.2.0"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+    use-sync-external-store "^1.5.0"
+
+"@mui/x-internals@8.12.0":
+  version "8.12.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-internals/-/x-internals-8.12.0.tgz#9c34edfa1d6d437c6df948e9fd999c0704051bd1"
+  integrity sha512-KCZgFHwuPg0v8I2gpjeC6k3eDRXPPX8RIGSNDXe8zSZ8dAw+p6Q2pzT9kKvctqCXSFK8ct/5YQwqx8Quhs8Ndg==
+  dependencies:
+    "@babel/runtime" "^7.28.2"
+    "@mui/utils" "^7.3.2"
+    reselect "^5.1.1"
+    use-sync-external-store "^1.5.0"
+
+"@mui/x-virtualizer@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-virtualizer/-/x-virtualizer-0.2.0.tgz#e2e47c9679d3ef18beac762f881c6b2c5092c4db"
+  integrity sha512-Gy0MJXXKN9F8zWG89UlIiWEMYqwVyMt0YDWHXBW3ysekmunVFvPwYlFvmwSc3EM2gU0g9IGJWSgfhWS9uLNdcQ==
+  dependencies:
+    "@babel/runtime" "^7.28.2"
+    "@mui/utils" "^7.3.2"
+    "@mui/x-internals" "8.12.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1988,7 +2020,7 @@ redux@^5.0.1:
   resolved "https://registry.yarnpkg.com/redux/-/redux-5.0.1.tgz#97fa26881ce5746500125585d5642c77b6e9447b"
   integrity sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==
 
-reselect@^5.1.0:
+reselect@^5.1.0, reselect@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.1.1.tgz#c766b1eb5d558291e5e550298adb0becc24bb72e"
   integrity sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==
@@ -2171,7 +2203,7 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-sync-external-store@^1.4.0:
+use-sync-external-store@^1.4.0, use-sync-external-store@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
   integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==

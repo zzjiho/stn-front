@@ -1,0 +1,28 @@
+import api from '../libs/api.ts';
+import type { DeviceRequest, DeviceResponse, DeviceListResponse, PaginationParams, ApiResponse, Device } from '../types/index';
+
+export const deviceService = {
+  getDevices: async (params: PaginationParams): Promise<ApiResponse<DeviceListResponse>> => {
+    return api.get('/devices', { params });
+  },
+
+  createDevice: async (deviceData: DeviceRequest): Promise<ApiResponse<DeviceResponse>> => {
+    return api.post('/devices', deviceData);
+  },
+
+  updateDevice: async (deviceId: number, deviceData: DeviceRequest): Promise<ApiResponse<DeviceResponse>> => {
+    return api.post(`/devices/${deviceId}`, deviceData);
+  },
+
+  deleteDevice: async (deviceId: number): Promise<ApiResponse<void>> => {
+    return api.delete(`/devices/${deviceId}`);
+  },
+
+  getDevice: async (deviceId: number): Promise<ApiResponse<Device>> => {
+    return api.get(`/devices/${deviceId}`);
+  },
+
+  getAllDevices: async (): Promise<ApiResponse<Device[]>> => {
+    return api.get('/devices/all');
+  }
+};
