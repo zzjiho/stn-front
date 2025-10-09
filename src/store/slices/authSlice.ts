@@ -13,8 +13,6 @@ interface AuthState {
     username: string;
     role: 'USER' | 'ADMIN';
   } | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -22,10 +20,8 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  accessToken: localStorage.getItem('accessToken'),
-  refreshToken: localStorage.getItem('refreshToken'),
-  isAuthenticated: localStorage.getItem('accessToken') !== null,
-  isLoading: false,
+  isAuthenticated: false,
+  isLoading: true,
   error: null,
 };
 
@@ -60,17 +56,31 @@ export const signupAsync = createAsyncThunk(
   }
 );
 
-export const refreshTokenAsync = createAsyncThunk(
-  'auth/refreshToken',
-  async (refreshToken: string, { rejectWithValue }) => {
+export const logoutAsync = createAsyncThunk(
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await authService.refreshToken(refreshToken);
+      await authService.logout();
+    } catch (error) {
+      if (ApiException.isApiException(error)) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('로그아웃에 실패했습니다.');
+    }
+  }
+);
+
+export const checkAuthAsync = createAsyncThunk(
+  'auth/checkAuth',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authService.checkAuth();
       return response;
     } catch (error) {
       if (ApiException.isApiException(error)) {
         return rejectWithValue(error.message);
       }
-      return rejectWithValue('토큰 갱신에 실패했습니다.');
+      return rejectWithValue('인증 확인에 실패했습니다.');
     }
   }
 );
@@ -79,26 +89,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
-      state.isAuthenticated = false;
-      state.error = null;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-    },
     clearError: (state) => {
       state.error = null;
     },
-    setCredentials: (state, action: PayloadAction<{ user: { username: string; role: 'USER' | 'ADMIN' }; accessToken: string; refreshToken: string }>) => {
-      const { user, accessToken, refreshToken } = action.payload;
-      state.user = user;
-      state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
+    setUser: (state, action: PayloadAction<{ username: string; role: 'USER' | 'ADMIN' }>) => {
+      state.user = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
     },
   },
   extraReducers: (builder) => {
@@ -110,13 +106,9 @@ const authSlice = createSlice({
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.isLoading = false;
-        const { username, role, accessToken, refreshToken } = action.payload.data;
+        const { username, role } = action.payload.data;
         state.user = { username, role };
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
         state.isAuthenticated = true;
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.isLoading = false;
@@ -134,14 +126,27 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
-      // Refresh Token
-      .addCase(refreshTokenAsync.fulfilled, (state, action) => {
-        const { accessToken } = action.payload.data;
-        state.accessToken = accessToken;
-        localStorage.setItem('accessToken', accessToken);
+      // Logout
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.error = null;
+      })
+      // Check Auth
+      .addCase(checkAuthAsync.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(checkAuthAsync.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+      })
+      .addCase(checkAuthAsync.rejected, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });
 
-export const { logout, clearError, setCredentials } = authSlice.actions;
+export const { clearError, setUser } = authSlice.actions;
 export default authSlice.reducer;

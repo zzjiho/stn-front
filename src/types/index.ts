@@ -18,8 +18,6 @@ export interface SignupRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
   username: string;
   role: 'USER' | 'ADMIN';
 }

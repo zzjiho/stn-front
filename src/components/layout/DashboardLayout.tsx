@@ -3,7 +3,7 @@ import { Outlet, Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AppBar, Box, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { logout } from '../../store/slices/authSlice';
+import { logoutAsync } from '../../store/slices/authSlice';
 
 const drawerWidth = 240;
 
@@ -28,8 +28,8 @@ export default function DashboardLayout() {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await dispatch(logoutAsync());
     handleClose();
     navigate('/login');
   };

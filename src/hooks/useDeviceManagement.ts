@@ -1,29 +1,16 @@
-/**
- * 장치 관리 비즈니스 로직을 처리하는 Custom Hook
- */
-
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store';
-import {
-    clearError,
-    createDeviceAsync,
-    deleteDeviceAsync,
-    fetchDevicesAsync,
-    updateDeviceAsync
-} from '../store/slices/deviceSlice';
-import type { Device } from '../types/index';
-import { useDeviceSelection } from './useDeviceSelection';
+import {useCallback, useEffect, useState} from 'react';
+import type {Device, DeviceRequest} from '../types/index';
+import {deviceService} from '../services/deviceService';
+import {useDeviceSelection} from './useDeviceSelection';
+import {ApiException} from '../exceptions/ApiException';
 
 export function useDeviceManagement() {
-    const dispatch = useAppDispatch();
-    const {
-        devices,
-        isLoading,
-        error,
-        currentPageNo,
-        sizePerPage,
-        totalCnt,
-    } = useAppSelector((state) => state.device);
+    const [devices, setDevices] = useState<Device[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [currentPageNo, setCurrentPageNo] = useState(1);
+    const [sizePerPage, setSizePerPage] = useState(10);
+    const [totalCnt, setTotalCnt] = useState(0);
 
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -39,63 +26,85 @@ export function useDeviceManagement() {
         clearSelection,
     } = useDeviceSelection(devices);
 
-    // 초기 데이터 로드 및 페이지 변경 시 데이터 로드
-    useEffect(() => {
-        dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
-    }, [dispatch, currentPageNo, sizePerPage]);
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await deviceService.getDevices({ page: currentPageNo, size: sizePerPage });
+            const { devices, currentPageNo: newCurrentPageNo, sizePerPage: newSizePerPage, totalCnt } = response.data;
+            setDevices(devices);
+            setCurrentPageNo(Math.max(1, newCurrentPageNo));
+            setSizePerPage(newSizePerPage);
+            setTotalCnt(totalCnt);
+        } catch (e) {
+            if (e instanceof ApiException) {
+                setError(e.message);
+            } else {
+                console.error(e);
+                setError('알 수 없는 오류가 발생했습니다.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [currentPageNo, sizePerPage]);
 
-    // 에러 자동 제거 (5초 후)
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
     useEffect(() => {
         if (error) {
-            const timer = setTimeout(() => {
-                dispatch(clearError());
-            }, 5000);
+            const timer = setTimeout(() => setError(null), 5000);
             return () => clearTimeout(timer);
         }
-    }, [error, dispatch]);
+    }, [error]);
 
-    // 장치 추가
-    const handleAddDevice = async (deviceData: { title: string; modelName: string }) => {
-        const resultAction = await dispatch(createDeviceAsync(deviceData));
-        if (createDeviceAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchDevicesAsync({page: 1, size: sizePerPage}));
+    const handleAddDevice = async (deviceData: DeviceRequest) => {
+        try {
+            await deviceService.createDevice(deviceData);
             setAddDialogOpen(false);
+            await fetchData();
+        } catch (e) {
+            if (e instanceof ApiException) setError(e.message);
         }
     };
 
-    // 장치 수정
-    const handleEditDevice = async (deviceData: { title: string; modelName: string }) => {
+    const handleEditDevice = async (deviceData: DeviceRequest) => {
         if (!editingDevice) return;
-
-        const resultAction = await dispatch(updateDeviceAsync({
-            deviceId: editingDevice.deviceId,
-            deviceData
-        }));
-
-        if (updateDeviceAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchDevicesAsync({page: currentPageNo, size: sizePerPage}));
+        try {
+            await deviceService.updateDevice(editingDevice.deviceId, deviceData);
             setEditDialogOpen(false);
             setEditingDevice(null);
             clearSelection();
+            await fetchData();
+        } catch (e) {
+            if (e instanceof ApiException) setError(e.message);
         }
     };
 
-    // 장치 삭제
     const handleDeleteDevice = async (deviceId: number) => {
-        await dispatch(deleteDeviceAsync(deviceId));
+        try {
+            await deviceService.deleteDevice(deviceId);
+            await fetchData();
+        } catch (e) {
+            if (e instanceof ApiException) setError(e.message);
+        }
     };
 
-    // 선택한 장치 일괄 삭제
     const handleBulkDelete = async () => {
         if (selectedRows.length > 0) {
-            for (const deviceId of selectedRows) {
-                await dispatch(deleteDeviceAsync(Number(deviceId)));
+            try {
+                for (const deviceId of selectedRows) {
+                    await deviceService.deleteDevice(Number(deviceId));
+                }
+                clearSelection();
+                await fetchData();
+            } catch (e) {
+                if (e instanceof ApiException) setError(e.message);
             }
-            clearSelection();
         }
     };
 
-    // 수정 다이얼로그 열기
     const handleEditOpen = () => {
         if (selectedRows.length === 1) {
             const deviceId = Number(selectedRows[0]);
@@ -107,37 +116,29 @@ export function useDeviceManagement() {
         }
     };
 
-    // 페이지 변경
     const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        dispatch(fetchDevicesAsync({page, size: sizePerPage}));
+        setCurrentPageNo(page);
     };
 
     return {
-        // 상태
         devices,
         isLoading,
         error,
         currentPageNo,
         sizePerPage,
         totalCnt,
-
-        // 다이얼로그 상태
         addDialogOpen,
         setAddDialogOpen,
         editDialogOpen,
         setEditDialogOpen,
         editingDevice,
         setEditingDevice,
-
-        // Selection 관련
         selectedRows,
         handleSelectRow,
         handleSelectAll,
         isRowSelected,
         isAllSelected,
         isIndeterminate,
-
-        // 핸들러
         handleAddDevice,
         handleEditDevice,
         handleDeleteDevice,

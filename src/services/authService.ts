@@ -10,12 +10,12 @@ export const authService = {
     return api.post('/auth/signup', userData);
   },
 
-  refreshToken: async (refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> => {
-    return api.post('/auth/refresh', { refreshToken });
+  logout: async (): Promise<ApiResponse<void>> => {
+    return api.post('/auth/logout', {});
   },
 
-  logout: (): void => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+  // 쿠키 기반 인증 확인
+  checkAuth: async (): Promise<ApiResponse<LoginResponse>> => {
+    return api.post('/auth/refresh', {});
   },
 };

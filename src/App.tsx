@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout, ProtectedRoute } from './components';
 import DashboardPage from './pages/DashboardPage';
@@ -5,8 +6,16 @@ import DeviceManagementPage from './pages/DeviceManagementPage';
 import LogManagementPage from './pages/LogManagementPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import { useAppDispatch } from './store';
+import { checkAuthAsync } from './store/slices/authSlice';
 
 function App() {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(checkAuthAsync());
+    }, [dispatch]);
+
     return (
         <BrowserRouter>
             <Routes>
