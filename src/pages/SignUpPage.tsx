@@ -40,71 +40,80 @@ export default function SignUpPage() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-                    <PersonAddAltIcon/>
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    Sign up
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 3}}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="username"
-                        label="Username"
-                        name="username"
-                        autoComplete="username"
-                        autoFocus
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
-                    />
-                    {error && (
-                        <Alert severity="error" sx={{mt: 2, width: '100%'}}>{error}</Alert>
-                    )}
-                    {success && (
-                        <Alert severity="success" sx={{mt: 2, width: '100%'}}>{success}</Alert>
-                    )}
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{mt: 3, mb: 2}}
-                        disabled={isLoading || !!success}
-                    >
-                        {isLoading ? <CircularProgress size={24}/> : 'Sign Up'}
-                    </Button>
-                    <Link href="/login" variant="body2">
-                        {"Already have an account? Sign in"}
-                    </Link>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '100vh',
+            }}
+        >
+            <Container component="main" maxWidth="xs">
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                        <PersonAddAltIcon/>
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Sign up
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 3}}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="new-password"
+                        />
+                        {error && (
+                            <Alert severity="error" sx={{mt: 2, width: '100%'}}>{error}</Alert>
+                        )}
+                        {success && (
+                            <Alert severity="success" sx={{mt: 2, width: '100%'}}>{success}</Alert>
+                        )}
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{mt: 3, mb: 2}}
+                            disabled={isLoading || !!success}
+                        >
+                            {isLoading ? <CircularProgress size={24}/> : 'Sign Up'}
+                        </Button>
+                        <Link href="/login" variant="body2">
+                            {"Already have an account? Sign in"}
+                        </Link>
+                    </Box>
                 </Box>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 }
