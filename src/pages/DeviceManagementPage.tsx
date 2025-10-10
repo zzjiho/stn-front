@@ -2,7 +2,7 @@
  * 장치 관리 페이지
  * - 장치 목록 조회, 추가, 수정, 삭제 기능 제공
  */
-import {Alert, Box, Pagination, Typography} from '@mui/material';
+import {Box, Pagination, Typography} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
 import {createDeviceTableColumns, DeviceActions, DeviceDialog} from '../components';
 import {useDeviceManagement} from '../hooks/useDeviceManagement';
@@ -24,12 +24,6 @@ export default function DeviceManagementPage() {
             <Typography variant="h4" sx={{mb: 2}}>
                 장치 관리
             </Typography>
-
-            {dm.error && (
-                <Alert severity="error" sx={{mb: 2}}>
-                    {dm.error}
-                </Alert>
-            )}
 
             <DeviceActions
                 selectedCount={dm.selectedRows.length}

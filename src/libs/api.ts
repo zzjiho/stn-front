@@ -2,6 +2,7 @@ import type {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axi
 import axios from 'axios';
 import { ApiException } from '../exceptions/ApiException.ts';
 import { ERROR_MESSAGE } from '../exceptions/constants/errorMessage';
+import { errorManager } from './errorManager';
 
 const BASE_URL = 'http://localhost:8080/onboarding/api';
 
@@ -92,7 +93,12 @@ api.interceptors.response.use(
             }
         }
 
-        return Promise.reject(new ApiException(message, status, code));
+        const apiException = new ApiException(message, status, code);
+
+        // 전역 에러 표시
+        errorManager.setError(apiException.message);
+
+        return Promise.reject(apiException);
     }
 );
 

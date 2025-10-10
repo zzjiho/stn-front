@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import { useAppDispatch } from './store';
 import { checkAuthAsync } from './store/slices/authSlice';
+import { ErrorProvider } from './contexts/ErrorContext';
 
 function App() {
     const dispatch = useAppDispatch();
@@ -17,23 +18,25 @@ function App() {
     }, [dispatch]);
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
+        <ErrorProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignUpPage />} />
 
-                <Route path="/" element={<DashboardLayout />}>
-                    <Route element={<ProtectedRoute />}>
-                        <Route path="dashboard" element={<DashboardPage />} />
-                        <Route path="devices" element={<DeviceManagementPage />} />
-                        <Route path="logs" element={<LogManagementPage />} />
-                        <Route index element={<Navigate to="/dashboard" />} />
+                    <Route path="/" element={<DashboardLayout />}>
+                        <Route element={<ProtectedRoute />}>
+                            <Route path="dashboard" element={<DashboardPage />} />
+                            <Route path="devices" element={<DeviceManagementPage />} />
+                            <Route path="logs" element={<LogManagementPage />} />
+                            <Route index element={<Navigate to="/dashboard" />} />
+                        </Route>
                     </Route>
-                </Route>
 
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </BrowserRouter>
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+            </BrowserRouter>
+        </ErrorProvider>
     );
 }
 

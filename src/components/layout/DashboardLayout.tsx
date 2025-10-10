@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Outlet, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
+import { AppBar, Box, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, IconButton, Menu, MenuItem, Snackbar, Alert } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { logoutAsync } from '../../store/slices/authSlice';
+import { useError } from '../../contexts/ErrorContext';
 
 const drawerWidth = 240;
 
@@ -18,6 +19,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { error, setError } = useError();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -33,6 +35,14 @@ export default function DashboardLayout() {
     handleClose();
     navigate('/login');
   };
+
+  // 에러 자동 제거 (5초 후)
+  React.useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, setError]);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -102,6 +112,18 @@ export default function DashboardLayout() {
         <Toolbar />
         <Outlet />
       </Box>
+
+      {/* 전역 에러 Snackbar */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={5000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert severity="error" onClose={() => setError(null)} sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

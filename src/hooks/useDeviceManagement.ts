@@ -2,12 +2,11 @@ import {useCallback, useEffect, useState} from 'react';
 import type {Device, DeviceRequest} from '../types/index';
 import {deviceService} from '../services/deviceService';
 import {useDeviceSelection} from './useDeviceSelection';
-import {ApiException} from '../exceptions/ApiException';
 
 export function useDeviceManagement() {
+
     const [devices, setDevices] = useState<Device[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [currentPageNo, setCurrentPageNo] = useState(1);
     const [sizePerPage, setSizePerPage] = useState(10);
     const [totalCnt, setTotalCnt] = useState(0);
@@ -28,80 +27,61 @@ export function useDeviceManagement() {
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
-        setError(null);
-        try {
-            const response = await deviceService.getDevices({ page: currentPageNo, size: sizePerPage });
+
+        const response = await deviceService.getDevices({
+            page: currentPageNo,
+            size: sizePerPage
+        }).catch(() => null);
+
+        if (response) {
             const { devices, currentPageNo: newCurrentPageNo, sizePerPage: newSizePerPage, totalCnt } = response.data;
             setDevices(devices);
             setCurrentPageNo(Math.max(1, newCurrentPageNo));
             setSizePerPage(newSizePerPage);
             setTotalCnt(totalCnt);
-        } catch (e) {
-            if (e instanceof ApiException) {
-                setError(e.message);
-            } else {
-                console.error(e);
-                setError('알 수 없는 오류가 발생했습니다.');
-            }
-        } finally {
-            setIsLoading(false);
         }
+
+        setIsLoading(false);
     }, [currentPageNo, sizePerPage]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => setError(null), 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [error]);
-
     const handleAddDevice = async (deviceData: DeviceRequest) => {
-        try {
-            await deviceService.createDevice(deviceData);
+        const result = await deviceService.createDevice(deviceData).catch(() => null);
+        if (result) {
             setAddDialogOpen(false);
             await fetchData();
-        } catch (e) {
-            if (e instanceof ApiException) setError(e.message);
         }
     };
 
     const handleEditDevice = async (deviceData: DeviceRequest) => {
         if (!editingDevice) return;
-        try {
-            await deviceService.updateDevice(editingDevice.deviceId, deviceData);
+
+        const result = await deviceService.updateDevice(editingDevice.deviceId, deviceData).catch(() => null);
+        if (result) {
             setEditDialogOpen(false);
             setEditingDevice(null);
             clearSelection();
             await fetchData();
-        } catch (e) {
-            if (e instanceof ApiException) setError(e.message);
         }
     };
 
     const handleDeleteDevice = async (deviceId: number) => {
-        try {
-            await deviceService.deleteDevice(deviceId);
+        const result = await deviceService.deleteDevice(deviceId).catch(() => null);
+        if (result) {
             await fetchData();
-        } catch (e) {
-            if (e instanceof ApiException) setError(e.message);
         }
     };
 
     const handleBulkDelete = async () => {
         if (selectedRows.length > 0) {
-            try {
-                for (const deviceId of selectedRows) {
-                    await deviceService.deleteDevice(Number(deviceId));
-                }
-                clearSelection();
-                await fetchData();
-            } catch (e) {
-                if (e instanceof ApiException) setError(e.message);
+            for (const deviceId of selectedRows) {
+                await deviceService.deleteDevice(Number(deviceId)).catch(() => null);
             }
+            clearSelection();
+            await fetchData();
         }
     };
 
@@ -123,7 +103,6 @@ export function useDeviceManagement() {
     return {
         devices,
         isLoading,
-        error,
         currentPageNo,
         sizePerPage,
         totalCnt,
