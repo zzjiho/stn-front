@@ -1,17 +1,15 @@
 /**
- * 장비 관리 관련 상태 (리팩토링 후)
- * - 페이지별 장비 목록(CRUD) 관련 로직은 useDeviceManagement 훅으로 이동
- * - 여기서는 여러 곳에서 필요한 '전체 장비 목록'만 관리
+ * 장비 관리 관련 상태
  */
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { Device } from '../../types/index';
-import { deviceService } from '../../services/deviceService';
-import { ApiException } from '../../exceptions/ApiException';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import type {Device} from '../../types/index';
+import {deviceService} from '../../services/deviceService';
+import {ApiException} from '../../exceptions/ApiException';
 
 interface DeviceState {
-    allDevices: Device[]; // 드롭다운용 전체 장치 목록
-    isLoading: boolean; // fetchAllDevicesAsync 로딩 상태
+    allDevices: Device[];
+    isLoading: boolean;
     error: string | null;
 }
 
@@ -21,7 +19,6 @@ const initialState: DeviceState = {
     error: null,
 };
 
-// 다른 곳에서 사용할 수 있는 Async thunk (예: 드롭다운 채우기)
 export const fetchAllDevicesAsync = createAsyncThunk(
     'device/fetchAllDevices',
     async (_, { rejectWithValue }) => {

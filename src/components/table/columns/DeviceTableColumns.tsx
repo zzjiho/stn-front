@@ -39,9 +39,9 @@ export const createDeviceTableColumns = ({
             />
         ),
     },
-    { field: 'deviceId', headerName: 'Device ID', width: 100 },
-    { field: 'title', headerName: 'Device Name', width: 250 },
-    { field: 'modelName', headerName: 'Model', width: 200 },
+    { field: 'deviceId', headerName: 'Device ID', width: 100, sortable: false },
+    { field: 'title', headerName: 'Device Name', width: 250, sortable: false },
+    { field: 'modelName', headerName: 'Model', width: 200, sortable: false },
     {
         field: 'regDate',
         headerName: 'Registration Date',
@@ -54,6 +54,7 @@ export const createDeviceTableColumns = ({
         field: 'actions',
         headerName: 'Actions',
         width: 120,
+        sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Box>
                 <IconButton

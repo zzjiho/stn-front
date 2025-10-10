@@ -2,19 +2,23 @@ import {useCallback, useEffect, useState} from 'react';
 import type {Device, DeviceRequest} from '../types/index';
 import {deviceService} from '../services/deviceService';
 import {useDeviceSelection} from './useDeviceSelection';
+import {usePagination} from './usePagination';
 
 export function useDeviceManagement() {
 
+    // 데이터 상태
     const [devices, setDevices] = useState<Device[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [currentPageNo, setCurrentPageNo] = useState(1);
-    const [sizePerPage, setSizePerPage] = useState(10);
-    const [totalCnt, setTotalCnt] = useState(0);
 
+    // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editingDevice, setEditingDevice] = useState<Device | null>(null);
 
+    // 페이지네이션
+    const {currentPageNo, sizePerPage, totalCnt, handlePageChange, setPaginationData} = usePagination();
+
+    // 행 선택 기능 (체크박스)
     const {
         selectedRows,
         handleSelectRow,
@@ -34,15 +38,13 @@ export function useDeviceManagement() {
         }).catch(() => null);
 
         if (response) {
-            const { devices, currentPageNo: newCurrentPageNo, sizePerPage: newSizePerPage, totalCnt } = response.data;
+            const {devices, currentPageNo, sizePerPage, totalCnt} = response.data;
             setDevices(devices);
-            setCurrentPageNo(Math.max(1, newCurrentPageNo));
-            setSizePerPage(newSizePerPage);
-            setTotalCnt(totalCnt);
+            setPaginationData({total: totalCnt, current: currentPageNo, size: sizePerPage});
         }
 
         setIsLoading(false);
-    }, [currentPageNo, sizePerPage]);
+    }, [currentPageNo, sizePerPage, setPaginationData]);
 
     useEffect(() => {
         fetchData();
@@ -96,28 +98,33 @@ export function useDeviceManagement() {
         }
     };
 
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPageNo(page);
-    };
-
     return {
+        // 데이터
         devices,
         isLoading,
         currentPageNo,
         sizePerPage,
         totalCnt,
+
+        // 추가 다이얼로그
         addDialogOpen,
         setAddDialogOpen,
+
+        // 수정 다이얼로그
         editDialogOpen,
         setEditDialogOpen,
         editingDevice,
         setEditingDevice,
+
+        // 행 선택 (체크박스)
         selectedRows,
         handleSelectRow,
         handleSelectAll,
         isRowSelected,
         isAllSelected,
         isIndeterminate,
+
+        // 액션 핸들러
         handleAddDevice,
         handleEditDevice,
         handleDeleteDevice,
