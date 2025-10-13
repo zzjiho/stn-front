@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {Box, Card, Grid, Typography} from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Card, Stack, Typography } from '@mui/material';
 import DevicesIcon from '@mui/icons-material/Devices';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import {deviceService} from '../services/deviceService';
+import { deviceService } from '../services/deviceService';
 
 interface SummaryCardProps {
     title: string;
@@ -43,25 +43,25 @@ export default function DashboardPage() {
 
     return (
         <Box>
-            <Typography variant="h4" sx={{mb: 3}}>
+            <Typography variant="h4" sx={{ mb: 3 }}>
                 Dashboard Overview
             </Typography>
-            <Grid container spacing={3}>
-                <Grid xs={12} sm={6} md={4}>
+            <Stack direction="row" spacing={3} sx={{ flexWrap: 'wrap' }}>
+                <Box sx={{ flex: '1 1 300px', minWidth: '300px' }}>
                     <SummaryCard
                         title="Total Devices"
                         value={stats.deviceCount}
-                        icon={<DevicesIcon sx={{fontSize: 50, color: 'primary.main'}}/>}
+                        icon={<DevicesIcon sx={{ fontSize: 50, color: 'primary.main' }} />}
                     />
-                </Grid>
-                <Grid xs={12} sm={6} md={4}>
+                </Box>
+                <Box sx={{ flex: '1 1 300px', minWidth: '300px' }}>
                     <SummaryCard
                         title="Pending Sign-ups"
                         value={stats.pendingUserCount}
-                        icon={<PeopleAltIcon sx={{fontSize: 50, color: 'secondary.main'}}/>}
+                        icon={<PeopleAltIcon sx={{ fontSize: 50, color: 'secondary.main' }} />}
                     />
-                </Grid>
-            </Grid>
+                </Box>
+            </Stack>
         </Box>
     );
 }

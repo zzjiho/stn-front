@@ -1,23 +1,34 @@
-/**
- * 로그(장치 사용량) 관리 비즈니스 로직을 처리하는 Custom Hook
- */
-
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store';
-import { fetchAllDevicesAsync } from '../store/slices/deviceSlice';
-import { clearError, createLogAsync, deleteLogAsync, fetchLogsAsync, updateLogAsync } from '../store/slices/logSlice';
-import type { LogResponse } from '../types/index';
-import { useLogSelection } from './useLogSelection';
+import {useCallback, useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../store';
+import {fetchAllDevicesAsync} from '../store/slices/deviceSlice';
+import type {Log, LogRequest} from '../types/index';
+import {logService} from '../services/logService';
+import {useLogSelection} from './useLogSelection';
+import {usePagination} from './usePagination';
 
 export function useLogManagement() {
     const dispatch = useAppDispatch();
     const { allDevices } = useAppSelector((state) => state.device);
-    const { logs, isLoading, error, currentPageNo, sizePerPage, totalCnt } = useAppSelector((state) => state.log);
 
+    // 데이터 상태
+    const [logs, setLogs] = useState<Log[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [editingLog, setEditingLog] = useState<LogResponse | null>(null);
+    const [editingLog, setEditingLog] = useState<Log | null>(null);
 
+    // 페이지네이션
+    const {
+        currentPageNo,
+        sizePerPage,
+        totalCnt,
+        handlePageChange,
+        setPaginationData
+    } = usePagination();
+
+    // 행 선택 기능 (체크박스)
     const {
         selectedRows,
         handleSelectRow,
@@ -28,70 +39,70 @@ export function useLogManagement() {
         clearSelection,
     } = useLogSelection(logs);
 
-    // 초기 데이터 로드 및 페이지 변경 시 데이터 로드
+    // 전체 장치 목록 로드
     useEffect(() => {
-        dispatch(fetchLogsAsync({page: currentPageNo, size: sizePerPage}));
         dispatch(fetchAllDevicesAsync());
-    }, [dispatch, currentPageNo, sizePerPage]);
+    }, [dispatch]);
 
-    // 에러 자동 제거 (5초 후)
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => {
-                dispatch(clearError());
-            }, 5000);
-            return () => clearTimeout(timer);
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
+
+        const response = await logService.getLogs({
+            page: currentPageNo,
+            size: sizePerPage
+        }).catch(() => null);
+
+        if (response) {
+            const { deviceUsages, currentPageNo, sizePerPage, totalCnt } = response.data;
+            setLogs(deviceUsages);
+            setPaginationData({ total: totalCnt, current: currentPageNo, size: sizePerPage });
         }
-    }, [error, dispatch]);
+
+        setIsLoading(false);
+    }, [currentPageNo, sizePerPage, setPaginationData]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     // 로그 추가
-    const handleAddLog = async (logData: {
-        deviceId: number;
-        cpuUsage: number;
-        memoryUsage: number;
-        diskUsage: number
-    }) => {
-        const resultAction = await dispatch(createLogAsync(logData));
-        if (createLogAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchLogsAsync({page: 1, size: sizePerPage}));
+    const handleAddLog = async (logData: LogRequest) => {
+        const result = await logService.createLog(logData).catch(() => null);
+        if (result) {
             setAddDialogOpen(false);
+            await fetchData();
         }
     };
 
     // 로그 수정
-    const handleEditLog = async (logData: {
-        deviceId: number;
-        cpuUsage: number;
-        memoryUsage: number;
-        diskUsage: number
-    }) => {
+    const handleEditLog = async (logData: LogRequest) => {
         if (!editingLog) return;
 
-        const resultAction = await dispatch(updateLogAsync({
-            usageId: editingLog.usageId,
-            logData
-        }));
-
-        if (updateLogAsync.fulfilled.match(resultAction)) {
-            dispatch(fetchLogsAsync({page: currentPageNo, size: sizePerPage}));
+        const result = await logService.updateLog(editingLog.usageId, logData).catch(() => null);
+        if (result) {
             setEditDialogOpen(false);
             setEditingLog(null);
             clearSelection();
+            await fetchData();
         }
     };
 
     // 로그 삭제
     const handleDeleteLog = async (usageId: number) => {
-        await dispatch(deleteLogAsync(usageId));
+        const result = await logService.deleteLog(usageId).catch(() => null);
+        if (result) {
+            await fetchData();
+        }
     };
 
     // 선택한 로그 일괄 삭제
     const handleBulkDelete = async () => {
         if (selectedRows.length > 0) {
             for (const usageId of selectedRows) {
-                await dispatch(deleteLogAsync(Number(usageId)));
+                await logService.deleteLog(Number(usageId)).catch(() => null);
             }
             clearSelection();
+            await fetchData();
         }
     };
 
@@ -107,30 +118,26 @@ export function useLogManagement() {
         }
     };
 
-    // 페이지 변경
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        dispatch(fetchLogsAsync({page, size: sizePerPage}));
-    };
-
     return {
-        // 상태
+        // 데이터
         logs,
         allDevices,
         isLoading,
-        error,
         currentPageNo,
         sizePerPage,
         totalCnt,
 
-        // 다이얼로그 상태
+        // 추가 다이얼로그
         addDialogOpen,
         setAddDialogOpen,
+
+        // 수정 다이얼로그
         editDialogOpen,
         setEditDialogOpen,
         editingLog,
         setEditingLog,
 
-        // Selection 관련
+        // 행 선택 (체크박스)
         selectedRows,
         handleSelectRow,
         handleSelectAll,
@@ -138,7 +145,7 @@ export function useLogManagement() {
         isAllSelected,
         isIndeterminate,
 
-        // 핸들러
+        // 액션 핸들러
         handleAddLog,
         handleEditLog,
         handleDeleteLog,

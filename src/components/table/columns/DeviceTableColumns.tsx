@@ -39,21 +39,21 @@ export const createDeviceTableColumns = ({
             />
         ),
     },
-    { field: 'deviceId', headerName: 'Device ID', width: 100, sortable: false },
-    { field: 'title', headerName: 'Device Name', width: 250, sortable: false },
-    { field: 'modelName', headerName: 'Model', width: 200, sortable: false },
+    { field: 'deviceId', headerName: '장치 ID', flex: 0.8, minWidth: 100, sortable: false },
+    { field: 'title', headerName: '장치명', flex: 1.5, minWidth: 200, sortable: false },
+    { field: 'modelName', headerName: '모델명', flex: 1.2, minWidth: 150, sortable: false },
     {
         field: 'regDate',
-        headerName: 'Registration Date',
-        width: 180,
-        valueFormatter: (params) => {
-            return new Date(params).toLocaleDateString('ko-KR');
-        }
+        headerName: '등록일',
+        flex: 1.5,
+        minWidth: 200,
+        valueFormatter: (value) => new Date(value).toLocaleString('ko-KR')
     },
     {
         field: 'actions',
-        headerName: 'Actions',
-        width: 120,
+        headerName: '작업',
+        flex: 0.8,
+        minWidth: 100,
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Box>

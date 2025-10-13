@@ -39,7 +39,7 @@ export default function DeviceManagementPage() {
                 getRowId={(row) => row.deviceId}
                 hideFooter
                 autoHeight
-                sx={{mb: 2}}
+                sx={{ mb: 2 }}
             />
 
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 2}}>

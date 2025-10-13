@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import type { LogResponse } from '../types/index';
+import type { Log } from '../types/index';
 
-export const useLogSelection = (logs: LogResponse[]) => {
+export const useLogSelection = (logs: Log[]) => {
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
     const handleSelectRow = (usageId: number, checked: boolean) => {

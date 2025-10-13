@@ -16,7 +16,7 @@ import {
     Select,
     TextField
 } from '@mui/material';
-import type {LogResponse} from '../../types/index';
+import type {Log} from '../../types/index';
 
 interface LogDialogProps {
     open: boolean;
@@ -24,7 +24,7 @@ interface LogDialogProps {
     onSubmit: (logData: { deviceId: number; cpuUsage: number; memoryUsage: number; diskUsage: number }) => void;
     title: string;
     submitLabel: string;
-    log?: LogResponse | null;
+    log?: Log | null;
     devices: Array<{ deviceId: number; title: string }>;
 }
 
@@ -81,7 +81,7 @@ export const LogDialog: React.FC<LogDialogProps> = ({
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <Box sx={{ pt: 1 }}>
-                        <FormControl fullWidth sx={{ mb: 2 }} required>
+                        <FormControl fullWidth sx={{ mb: 2 }} required disabled={!!log}>
                             <InputLabel id="device-select-label">장치 선택</InputLabel>
                             <Select
                                 labelId="device-select-label"

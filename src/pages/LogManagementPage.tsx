@@ -3,7 +3,7 @@
  * - 장치 사용량 목록 조회, 추가, 수정, 삭제 기능 제공
  */
 
-import {Alert, Box, Pagination, Typography} from '@mui/material';
+import {Box, Pagination, Typography} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
 import {createLogTableColumns, LogActions, LogDialog} from '../components';
 import {useLogManagement} from '../hooks/useLogManagement';
@@ -21,16 +21,10 @@ export default function LogManagementPage() {
     });
 
     return (
-        <Box sx={{height: 600, width: '100%'}}>
-            <Typography variant="h4" sx={{mb: 2}}>
+        <Box sx={{ height: 600, width: '100%' }}>
+            <Typography variant="h4" sx={{ mb: 2 }}>
                 장치 사용량 목록
             </Typography>
-
-            {lm.error && (
-                <Alert severity="error" sx={{mb: 2}}>
-                    {lm.error}
-                </Alert>
-            )}
 
             <LogActions
                 selectedCount={lm.selectedRows.length}
@@ -46,15 +40,15 @@ export default function LogManagementPage() {
                 getRowId={(row) => row.usageId}
                 hideFooter
                 autoHeight
-                sx={{mb: 2}}
+                sx={{ mb: 2 }}
                 initialState={{
                     sorting: {
-                        sortModel: [{field: 'regDate', sort: 'desc'}],
+                        sortModel: [{ field: 'regDate', sort: 'desc' }],
                     },
                 }}
             />
 
-            <Box sx={{display: 'flex', justifyContent: 'center', mt: 2}}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                 <Pagination
                     count={Math.ceil(lm.totalCnt / lm.sizePerPage)}
                     page={lm.currentPageNo}

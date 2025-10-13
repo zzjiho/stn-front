@@ -16,7 +16,13 @@ export function useDeviceManagement() {
     const [editingDevice, setEditingDevice] = useState<Device | null>(null);
 
     // 페이지네이션
-    const {currentPageNo, sizePerPage, totalCnt, handlePageChange, setPaginationData} = usePagination();
+    const {
+        currentPageNo,
+        sizePerPage,
+        totalCnt,
+        handlePageChange,
+        setPaginationData
+    } = usePagination();
 
     // 행 선택 기능 (체크박스)
     const {

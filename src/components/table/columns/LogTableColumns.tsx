@@ -43,22 +43,25 @@ export const createLogTableColumns = ({
             />
         ),
     },
-    { field: 'usageId', headerName: 'Log ID', width: 100 },
-    { field: 'deviceId', headerName: 'Device ID', width: 100 },
-    { field: 'title', headerName: '장치명', width: 180 },
+    { field: 'usageId', headerName: '사용량 ID', flex: 0.7, minWidth: 100, sortable: false },
+    { field: 'deviceId', headerName: '장치 ID', flex: 0.7, minWidth: 100, sortable: false },
+    { field: 'title', headerName: '장치명', flex: 1.2, minWidth: 150, sortable: false },
+    { field: 'cpuUsage', headerName: 'CPU 사용률 (%)', type: 'number', flex: 1, minWidth: 130, sortable: false, align: 'left', headerAlign: 'left' },
+    { field: 'memoryUsage', headerName: '메모리 사용률 (%)', type: 'number', flex: 1.2, minWidth: 150, sortable: false, align: 'left', headerAlign: 'left' },
+    { field: 'diskUsage', headerName: '디스크 사용률 (%)', type: 'number', flex: 1.2, minWidth: 150, sortable: false, align: 'left', headerAlign: 'left' },
     {
         field: 'regDate',
-        headerName: '기록 시간',
-        width: 180,
+        headerName: '등록일',
+        flex: 1.5,
+        minWidth: 180,
         valueFormatter: (value) => new Date(value as string).toLocaleString('ko-KR')
     },
-    { field: 'cpuUsage', headerName: 'CPU 사용률 (%)', type: 'number', width: 130 },
-    { field: 'memoryUsage', headerName: '메모리 사용률 (%)', type: 'number', width: 150 },
-    { field: 'diskUsage', headerName: '디스크 사용률 (%)', type: 'number', width: 150 },
     {
         field: 'actions',
-        headerName: 'Actions',
-        width: 120,
+        headerName: '작업',
+        flex: 0.7,
+        minWidth: 100,
+        sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Box>
                 <IconButton
