@@ -21,6 +21,18 @@ export interface LoginResponse {
   role: 'USER' | 'ADMIN';
 }
 
+// 토큰 재발급 응답
+export interface RefreshResponse {
+  userInfo: {
+    username: string;
+    role: 'USER' | 'ADMIN';
+  };
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
 // 회원가입 응답
 export interface SignupResponse {
   userId: number;

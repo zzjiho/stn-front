@@ -1,5 +1,5 @@
 import api from '../libs/api.ts';
-import type {ApiResponse, LoginRequest, LoginResponse, SignupRequest, SignupResponse} from '../types/index';
+import type {ApiResponse, LoginRequest, LoginResponse, RefreshResponse, SignupRequest, SignupResponse} from '../types/index';
 
 export const authService = {
   login: async (credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
@@ -15,7 +15,7 @@ export const authService = {
   },
 
   // 쿠키 기반 인증 확인
-  checkAuth: async (): Promise<ApiResponse<LoginResponse>> => {
+  checkAuth: async (): Promise<ApiResponse<RefreshResponse>> => {
     return api.post('/auth/refresh', {});
   },
 };
