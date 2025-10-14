@@ -39,9 +39,20 @@ export const createDeviceTableColumns = ({
             />
         ),
     },
-    { field: 'deviceId', headerName: '장치 ID', flex: 0.8, minWidth: 100, sortable: false },
-    { field: 'title', headerName: '장치명', flex: 1.5, minWidth: 200, sortable: false },
-    { field: 'modelName', headerName: '모델명', flex: 1.2, minWidth: 150, sortable: false },
+    {
+        field: 'title',
+        headerName: '장치명',
+        flex: 1.5,
+        minWidth: 200,
+        sortable: false
+    },
+    {
+        field: 'modelName',
+        headerName: '모델명',
+        flex: 1.2,
+        minWidth: 150,
+        sortable: false
+    },
     {
         field: 'regDate',
         headerName: '등록일',
