@@ -4,6 +4,7 @@ import { DashboardLayout, ProtectedRoute } from './components';
 import DashboardPage from './pages/DashboardPage';
 import DeviceManagementPage from './pages/DeviceManagementPage';
 import LogManagementPage from './pages/LogManagementPage';
+import UserManagementPage from './pages/UserManagementPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import { useAppDispatch } from './store';
@@ -29,6 +30,7 @@ function App() {
                             <Route path="dashboard" element={<DashboardPage />} />
                             <Route path="devices" element={<DeviceManagementPage />} />
                             <Route path="logs" element={<LogManagementPage />} />
+                            <Route path="users" element={<UserManagementPage />} />
                             <Route index element={<Navigate to="/dashboard" />} />
                         </Route>
                     </Route>
