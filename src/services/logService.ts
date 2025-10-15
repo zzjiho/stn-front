@@ -4,11 +4,12 @@ import type {
     LogResponse,
     LogListResponse,
     LogRequest,
-    PaginationParams
+    PaginationParams,
+    SortParams
 } from '../types/index';
 
 export const logService = {
-    getLogs: async (params: PaginationParams): Promise<ApiResponse<LogListResponse>> => {
+    getLogs: async (params: PaginationParams & SortParams): Promise<ApiResponse<LogListResponse>> => {
         return api.get('/devices/usage', {params});
     },
 

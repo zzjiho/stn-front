@@ -1,5 +1,6 @@
 import {Box, Checkbox, IconButton} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 
 interface DeviceTableColumnsProps {
@@ -9,6 +10,8 @@ interface DeviceTableColumnsProps {
     isRowSelected: (deviceId: number) => boolean;
     isAllSelected: () => boolean;
     isIndeterminate: () => boolean;
+    sortDir: 'ASC' | 'DESC';
+    onSortChange: (sortDir: 'ASC' | 'DESC') => void;
 }
 
 export const createDeviceTableColumns = ({
@@ -17,7 +20,9 @@ export const createDeviceTableColumns = ({
     onDeleteDevice,
     isRowSelected,
     isAllSelected,
-    isIndeterminate
+    isIndeterminate,
+    sortDir,
+    onSortChange
 }: DeviceTableColumnsProps): GridColDef[] => [
     {
         field: 'select',
@@ -58,7 +63,32 @@ export const createDeviceTableColumns = ({
         headerName: '등록일',
         flex: 1.5,
         minWidth: 200,
-        valueFormatter: (value) => new Date(value).toLocaleString('ko-KR')
+        sortable: false,
+        valueFormatter: (value) => new Date(value).toLocaleString('ko-KR'),
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange(sortDir === 'DESC' ? 'ASC' : 'DESC')}
+            >
+                <span>등록일</span>
+                <ArrowDownwardIcon
+                    sx={{
+                        ml: 0.5,
+                        fontSize: 18,
+                        transform: sortDir === 'ASC' ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.2s'
+                    }}
+                />
+            </Box>
+        )
     },
     {
         field: 'actions',

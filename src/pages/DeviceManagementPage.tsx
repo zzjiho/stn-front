@@ -17,6 +17,8 @@ export default function DeviceManagementPage() {
         isRowSelected: dm.isRowSelected,
         isAllSelected: dm.isAllSelected,
         isIndeterminate: dm.isIndeterminate,
+        sortDir: dm.sortDir,
+        onSortChange: dm.handleSortChange,
     });
 
     return (

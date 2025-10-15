@@ -4,12 +4,13 @@ import type {
     DeviceResponse,
     DeviceListResponse,
     PaginationParams,
+    SortParams,
     ApiResponse,
     Device
 } from '../types/index';
 
 export const deviceService = {
-    getDevices: async (params: PaginationParams): Promise<ApiResponse<DeviceListResponse>> => {
+    getDevices: async (params: PaginationParams & SortParams): Promise<ApiResponse<DeviceListResponse>> => {
         return api.get('/devices', {params});
     },
 

@@ -18,6 +18,8 @@ export default function LogManagementPage() {
         isRowSelected: lm.isRowSelected,
         isAllSelected: lm.isAllSelected,
         isIndeterminate: lm.isIndeterminate,
+        sortDir: lm.sortDir,
+        onSortChange: lm.handleSortChange,
     });
 
     return (
@@ -41,11 +43,6 @@ export default function LogManagementPage() {
                 hideFooter
                 autoHeight
                 sx={{ mb: 2 }}
-                initialState={{
-                    sorting: {
-                        sortModel: [{ field: 'regDate', sort: 'desc' }],
-                    },
-                }}
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>

@@ -10,6 +10,10 @@ export function useDeviceManagement() {
     const [devices, setDevices] = useState<Device[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    // 정렬 상태
+    const [sortBy, setSortBy] = useState<string>('regDate');
+    const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('DESC');
+
     // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -40,7 +44,9 @@ export function useDeviceManagement() {
 
         const response = await deviceService.getDevices({
             page: currentPageNo,
-            size: sizePerPage
+            size: sizePerPage,
+            sortBy,
+            sortDir
         }).catch(() => null);
 
         if (response) {
@@ -50,7 +56,7 @@ export function useDeviceManagement() {
         }
 
         setIsLoading(false);
-    }, [currentPageNo, sizePerPage, setPaginationData]);
+    }, [currentPageNo, sizePerPage, sortBy, sortDir, setPaginationData]);
 
     useEffect(() => {
         fetchData();
@@ -104,6 +110,10 @@ export function useDeviceManagement() {
         }
     };
 
+    const handleSortChange = (newSortDir: 'ASC' | 'DESC') => {
+        setSortDir(newSortDir);
+    };
+
     return {
         // 데이터
         devices,
@@ -111,6 +121,11 @@ export function useDeviceManagement() {
         currentPageNo,
         sizePerPage,
         totalCnt,
+
+        // 정렬
+        sortBy,
+        sortDir,
+        handleSortChange,
 
         // 추가 다이얼로그
         addDialogOpen,

@@ -14,3 +14,9 @@ export interface PaginationParams {
   page: number;
   size: number;
 }
+
+// 정렬
+export interface SortParams {
+  sortBy?: string;
+  sortDir?: 'ASC' | 'DESC';
+}
