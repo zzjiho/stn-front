@@ -91,7 +91,7 @@ export function LogDialog({
                             >
                                 {devices.map((device) => (
                                     <MenuItem key={device.deviceId} value={device.deviceId}>
-                                        {device.title} (ID: {device.deviceId})
+                                        {device.title}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -104,7 +104,7 @@ export function LogDialog({
                             type="number"
                             fullWidth
                             required
-                            inputProps={{ min: 0, max: 100, step: 0.1 }}
+                            inputProps={{ min: 0, max: 100, step: 1 }}
                             sx={{ mb: 2 }}
                         />
 
@@ -115,7 +115,7 @@ export function LogDialog({
                             type="number"
                             fullWidth
                             required
-                            inputProps={{ min: 0, max: 100, step: 0.1 }}
+                            inputProps={{ min: 0, max: 100, step: 1 }}
                             sx={{ mb: 2 }}
                         />
 
@@ -126,7 +126,7 @@ export function LogDialog({
                             type="number"
                             fullWidth
                             required
-                            inputProps={{ min: 0, max: 100, step: 0.1 }}
+                            inputProps={{ min: 0, max: 100, step: 1 }}
                         />
                     </Box>
                 </DialogContent>

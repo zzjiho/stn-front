@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 
-interface LogTableColumnsProps {
+export interface LogTableColumnsProps {
     onSelectRow: (usageId: number, checked: boolean) => void;
     onSelectAll: (checked: boolean) => void;
     onDeleteLog: (usageId: number) => void;

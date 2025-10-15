@@ -2,13 +2,13 @@ import { useState } from 'react';
 import type { Device } from '../types/index';
 
 export const useDeviceSelection = (devices: Device[]) => {
-    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
     const handleSelectRow = (deviceId: number, checked: boolean) => {
         if (checked) {
             setSelectedRows(prev => [...prev, deviceId]);
         } else {
-            setSelectedRows(prev => prev.filter(id => Number(id) !== deviceId));
+            setSelectedRows(prev => prev.filter(id => id !== deviceId));
         }
     };
 
@@ -21,7 +21,7 @@ export const useDeviceSelection = (devices: Device[]) => {
     };
 
     const isRowSelected = (deviceId: number) => {
-        return selectedRows.some(id => Number(id) === deviceId);
+        return selectedRows.includes(deviceId);
     };
 
     const isAllSelected = () => {
@@ -43,7 +43,6 @@ export const useDeviceSelection = (devices: Device[]) => {
         isRowSelected,
         isAllSelected,
         isIndeterminate,
-        clearSelection,
-        setSelectedRows
+        clearSelection
     };
 };

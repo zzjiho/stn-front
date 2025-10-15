@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 
-interface DeviceTableColumnsProps {
+export interface DeviceTableColumnsProps {
     onSelectRow: (deviceId: number, checked: boolean) => void;
     onSelectAll: (checked: boolean) => void;
     onDeleteDevice: (deviceId: number) => void;

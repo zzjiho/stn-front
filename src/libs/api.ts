@@ -1,8 +1,21 @@
 import type {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { ApiException } from '../exceptions/ApiException.ts';
 import { ERROR_MESSAGE } from '../exceptions/constants/errorMessage';
 import { errorManager } from './errorManager';
+
+// retry 플래그 추가한 Axios 요청 설정 타입
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean;
+}
+
+// Error Response
+interface BackendErrorResponse {
+    errorMessage?: string;
+    message?: string;
+    errorCode?: string;
+    code?: string;
+}
 
 const BASE_URL = 'http://localhost:8080/onboarding/api';
 
@@ -18,7 +31,6 @@ const api: AxiosInstance = axios.create({
 // Request interceptor
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        console.log('🚀 API Request:', config.method?.toUpperCase(), config.url);
         return config;
     },
     (error) => {
@@ -29,77 +41,79 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
     (response: AxiosResponse) => {
-        console.log('✅ API Response:', response.status, response.config.url);
         return response.data;
     },
-    async (error) => {
-        console.error('❌ API Error:', error.response?.status, error.config?.url, error.message);
-        const originalRequest = error.config;
 
-        // 401 에러이고, 재시도하지 않은 요청인 경우
-        // /auth/refresh 요청 자체는 제외
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            if (originalRequest.url?.includes('/auth/refresh')) {
-                return Promise.reject(
-                    new ApiException(ERROR_MESSAGE.TOKEN_EXPIRED, 401, 'REFRESH_FAILED')
-                );
-            }
+    // 에러 응답 처리
+    async (error: AxiosError<BackendErrorResponse>) => {
+        const originalRequest = error.config as RetryableRequestConfig;
+        const is401Error = error.response?.status === 401;
+        const notRetried = !originalRequest._retry;
 
-            originalRequest._retry = true;
-
-            try {
-                // 토큰 갱신
-                await axios.post(
-                    `${BASE_URL}/auth/refresh`,
-                    {},
-                    { withCredentials: true }
-                );
-
-                return api(originalRequest);
-            } catch (refreshError) {
-                return Promise.reject(
-                    new ApiException(ERROR_MESSAGE.TOKEN_EXPIRED, 401, 'TOKEN_EXPIRED')
-                );
-            }
+        if (is401Error && notRetried && !isAuthRequest(originalRequest.url)) {
+            return refreshTokenAndRetry(originalRequest);
         }
 
         const status = error.response?.status;
-        const backendMessage = error.response?.data?.message;
-        const code = error.response?.data?.code;
-
-        let message = backendMessage;
-
-        if (!message) {
-            switch (status) {
-                case 400:
-                    message = ERROR_MESSAGE.BAD_REQUEST;
-                    break;
-                case 401:
-                    message = ERROR_MESSAGE.UNAUTHORIZED;
-                    break;
-                case 403:
-                    message = ERROR_MESSAGE.FORBIDDEN;
-                    break;
-                case 404:
-                    message = ERROR_MESSAGE.NOT_FOUND;
-                    break;
-                case 500:
-                case 502:
-                case 503:
-                    message = ERROR_MESSAGE.SERVER_ERROR;
-                    break;
-                default:
-                    message = error.message || ERROR_MESSAGE.UNKNOWN_ERROR;
-            }
-        }
+        const message = extractErrorMessage(error);
+        const code = error.response?.data?.errorCode || error.response?.data?.code;
 
         const apiException = new ApiException(message, status, code);
-
-        // 전역 에러 표시
         errorManager.setError(apiException.message);
 
         return Promise.reject(apiException);
     }
 );
+
+/**
+ * 인증 관련 요청인지 확인
+ */
+const isAuthRequest = (url?: string): boolean => {
+    return url?.includes('/auth/login') || url?.includes('/auth/refresh') || false;
+};
+
+/**
+ * 토큰 갱신 및 요청 재시도
+ */
+const refreshTokenAndRetry = async (originalRequest: RetryableRequestConfig) => {
+    originalRequest._retry = true;
+
+    try {
+        await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        return api(originalRequest);
+    } catch {
+        throw new ApiException(ERROR_MESSAGE.TOKEN_EXPIRED, 401, 'TOKEN_EXPIRED');
+    }
+};
+
+/**
+ * 에러 메시지 추출
+ */
+const extractErrorMessage = (error: AxiosError<BackendErrorResponse>): string => {
+    const backendMessage = error.response?.data?.errorMessage || error.response?.data?.message;
+
+    if (backendMessage) {
+        return backendMessage;
+    }
+
+    const status = error.response?.status;
+    switch (status) {
+        case 400:
+            return ERROR_MESSAGE.BAD_REQUEST;
+        case 401:
+            return ERROR_MESSAGE.UNAUTHORIZED;
+        case 403:
+            return ERROR_MESSAGE.FORBIDDEN;
+        case 404:
+            return ERROR_MESSAGE.NOT_FOUND;
+        case 500:
+        case 502:
+        case 503:
+            return ERROR_MESSAGE.SERVER_ERROR;
+        default:
+            return error.message || ERROR_MESSAGE.UNKNOWN_ERROR;
+    }
+};
+
 
 export default api;

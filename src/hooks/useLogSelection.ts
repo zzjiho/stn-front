@@ -2,13 +2,13 @@ import { useState } from 'react';
 import type { Log } from '../types/index';
 
 export const useLogSelection = (logs: Log[]) => {
-    const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
     const handleSelectRow = (usageId: number, checked: boolean) => {
         if (checked) {
             setSelectedRows(prev => [...prev, usageId]);
         } else {
-            setSelectedRows(prev => prev.filter(id => Number(id) !== usageId));
+            setSelectedRows(prev => prev.filter(id => id !== usageId));
         }
     };
 
@@ -21,7 +21,7 @@ export const useLogSelection = (logs: Log[]) => {
     };
 
     const isRowSelected = (usageId: number) => {
-        return selectedRows.some(id => Number(id) === usageId);
+        return selectedRows.includes(usageId);
     };
 
     const isAllSelected = () => {

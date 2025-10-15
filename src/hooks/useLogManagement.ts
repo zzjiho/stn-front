@@ -15,7 +15,7 @@ export function useLogManagement() {
     const [isLoading, setIsLoading] = useState(false);
 
     // 정렬 상태
-    const [sortBy, setSortBy] = useState<string>('regDate');
+    const sortBy = 'regDate';
     const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('DESC');
 
     // 다이얼로그 상태
@@ -65,7 +65,7 @@ export function useLogManagement() {
         }
 
         setIsLoading(false);
-    }, [currentPageNo, sizePerPage, sortBy, sortDir, setPaginationData]);
+    }, [currentPageNo, sizePerPage, sortDir, setPaginationData]);
 
     useEffect(() => {
         fetchData();
