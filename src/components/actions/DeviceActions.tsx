@@ -1,4 +1,3 @@
-import React from 'react';
 import {Box, Button} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,12 +10,12 @@ interface DeviceActionsProps {
     onBulkDelete: () => void;
 }
 
-export const DeviceActions: React.FC<DeviceActionsProps> = ({
+export function DeviceActions({
     selectedCount,
     onAdd,
     onEdit,
     onBulkDelete
-}) => {
+}: DeviceActionsProps) {
     return (
         <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
             <Button
@@ -45,4 +44,4 @@ export const DeviceActions: React.FC<DeviceActionsProps> = ({
             </Button>
         </Box>
     );
-};
+}

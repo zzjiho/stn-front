@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Dialog,
     DialogActions,
@@ -18,14 +18,14 @@ interface DeviceDialogProps {
     device?: Device | null;
 }
 
-export const DeviceDialog: React.FC<DeviceDialogProps> = ({
+export function DeviceDialog({
     open,
     onClose,
     onSubmit,
     title,
     submitLabel,
     device
-}) => {
+}: DeviceDialogProps) {
     const [formData, setFormData] = useState({
         title: '',
         modelName: ''
@@ -89,4 +89,4 @@ export const DeviceDialog: React.FC<DeviceDialogProps> = ({
             </form>
         </Dialog>
     );
-};
+}

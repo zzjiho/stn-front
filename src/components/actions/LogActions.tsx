@@ -2,7 +2,6 @@
  * 액션 버튼들 분리
  */
 
-import React from 'react';
 import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -15,12 +14,12 @@ interface LogActionsProps {
     onBulkDelete: () => void;
 }
 
-export const LogActions: React.FC<LogActionsProps> = ({
+export function LogActions({
     selectedCount,
     onAdd,
     onEdit,
     onBulkDelete,
-}) => {
+}: LogActionsProps) {
     return (
         <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
             <Button
@@ -49,4 +48,4 @@ export const LogActions: React.FC<LogActionsProps> = ({
             </Button>
         </Box>
     );
-};
+}

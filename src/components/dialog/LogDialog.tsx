@@ -2,7 +2,7 @@
  * 추가/수정 다이얼로그 분리
  */
 
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
     Box,
     Button,
@@ -28,7 +28,7 @@ interface LogDialogProps {
     devices: Array<{ deviceId: number; title: string }>;
 }
 
-export const LogDialog: React.FC<LogDialogProps> = ({
+export function LogDialog({
     open,
     onClose,
     onSubmit,
@@ -36,7 +36,7 @@ export const LogDialog: React.FC<LogDialogProps> = ({
     submitLabel,
     log,
     devices,
-}) => {
+}: LogDialogProps) {
     const [formData, setFormData] = useState({
         deviceId: '' as number | '',
         cpuUsage: '',
@@ -143,4 +143,4 @@ export const LogDialog: React.FC<LogDialogProps> = ({
             </form>
         </Dialog>
     );
-};
+}
