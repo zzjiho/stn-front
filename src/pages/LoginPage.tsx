@@ -28,20 +28,13 @@ export default function LoginPage() {
     const username = data.get('username') as string;
     const password = data.get('password') as string;
 
-    console.log('🔑 로그인 시도함:', { username, password: '***' });
-
     if (!username || !password) {
-      console.warn('⚠️ 아이디 또는 비밀번호를 입력하지 않음');
       return;
     }
 
     const resultAction = await dispatch(loginAsync({ username, password }));
-    console.log('📝 로그인 결과:', resultAction);
     if (loginAsync.fulfilled.match(resultAction)) {
-      console.log('✅ 로그인 성공, 대시보드로 이동함');
       navigate('/');
-    } else {
-      console.error('❌ 로그인 실패:', resultAction);
     }
   };
 
