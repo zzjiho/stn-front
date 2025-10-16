@@ -1,14 +1,12 @@
 import {useCallback, useEffect, useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../store';
-import {fetchAllDevicesAsync} from '../store/slices/deviceSlice';
 import type {Log, LogRequest} from '../types/index';
 import {logService} from '../services/logService';
 import {useLogSelection} from './useLogSelection';
 import {usePagination} from './usePagination';
+import {useAllDevices} from './useAllDevices';
 
 export function useLogManagement() {
-    const dispatch = useAppDispatch();
-    const { allDevices } = useAppSelector((state) => state.device);
+    const { allDevices, fetchAllDevices } = useAllDevices();
 
     // 데이터 상태
     const [logs, setLogs] = useState<Log[]>([]);
@@ -43,10 +41,6 @@ export function useLogManagement() {
         clearSelection,
     } = useLogSelection(logs);
 
-    // 전체 장치 목록 로드
-    useEffect(() => {
-        dispatch(fetchAllDevicesAsync());
-    }, [dispatch]);
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -59,9 +53,9 @@ export function useLogManagement() {
         }).catch(() => null);
 
         if (response) {
-            const { deviceUsages, currentPageNo, sizePerPage, totalCnt } = response.data;
+            const {deviceUsages, currentPageNo, sizePerPage, totalCnt} = response.data;
             setLogs(deviceUsages);
-            setPaginationData({ total: totalCnt, current: currentPageNo, size: sizePerPage });
+            setPaginationData({total: totalCnt, current: currentPageNo, size: sizePerPage});
         }
 
         setIsLoading(false);
@@ -77,6 +71,7 @@ export function useLogManagement() {
         if (result) {
             setAddDialogOpen(false);
             await fetchData();
+            await fetchAllDevices();
         }
     };
 
@@ -90,6 +85,7 @@ export function useLogManagement() {
             setEditingLog(null);
             clearSelection();
             await fetchData();
+            await fetchAllDevices();
         }
     };
 
@@ -98,6 +94,7 @@ export function useLogManagement() {
         const result = await logService.deleteLog(usageId).catch(() => null);
         if (result) {
             await fetchData();
+            await fetchAllDevices();
         }
     };
 
