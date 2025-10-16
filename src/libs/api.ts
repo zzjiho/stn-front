@@ -28,16 +28,6 @@ const api: AxiosInstance = axios.create({
     withCredentials: true,
 });
 
-// Request interceptor
-api.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 // Response interceptor
 api.interceptors.response.use(
     (response: AxiosResponse) => {

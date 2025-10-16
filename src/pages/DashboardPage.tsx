@@ -33,8 +33,7 @@ export default function DashboardPage() {
                 const response = await deviceService.getDevices({page: 1, size: 100});
                 const deviceCount = response.data?.totalCnt || 0;
                 setStats({deviceCount, pendingUserCount: 0});
-            } catch (error) {
-                console.error('Error fetching stats:', error);
+            } catch {
                 setStats({deviceCount: 0, pendingUserCount: 0});
             }
         };
