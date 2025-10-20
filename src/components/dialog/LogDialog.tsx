@@ -81,21 +81,31 @@ export function LogDialog({
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <Box sx={{ pt: 1 }}>
-                        <FormControl fullWidth sx={{ mb: 2 }} required disabled={!!log}>
-                            <InputLabel id="device-select-label">장치 선택</InputLabel>
-                            <Select
-                                labelId="device-select-label"
-                                value={formData.deviceId}
-                                label="장치 선택"
-                                onChange={(e) => setFormData(prev => ({ ...prev, deviceId: e.target.value as number }))}
-                            >
-                                {devices.map((device) => (
-                                    <MenuItem key={device.deviceId} value={device.deviceId}>
-                                        {device.title}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        {log ? (
+                            <TextField
+                                label="장치"
+                                value={log.title}
+                                fullWidth
+                                disabled
+                                sx={{ mb: 2 }}
+                            />
+                        ) : (
+                            <FormControl fullWidth sx={{ mb: 2 }} required>
+                                <InputLabel id="device-select-label">장치 선택</InputLabel>
+                                <Select
+                                    labelId="device-select-label"
+                                    value={formData.deviceId}
+                                    label="장치 선택"
+                                    onChange={(e) => setFormData(prev => ({ ...prev, deviceId: e.target.value as number }))}
+                                >
+                                    {devices.map((device) => (
+                                        <MenuItem key={device.deviceId} value={device.deviceId}>
+                                            {device.title}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
 
                         <TextField
                             label="CPU 사용률 (%)"

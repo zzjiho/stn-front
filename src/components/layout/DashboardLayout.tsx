@@ -24,7 +24,6 @@ import {useError} from '../../contexts/ErrorContext';
 const drawerWidth = 240;
 
 const navItems = [
-    {text: 'Dashboard', path: '/dashboard'},
     {text: 'Device Management', path: '/devices'},
     {text: 'Log Management', path: '/logs'},
     {text: 'User Management', path: '/users'},

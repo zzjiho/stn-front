@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout, ProtectedRoute } from './components';
-import DashboardPage from './pages/DashboardPage';
 import DeviceManagementPage from './pages/DeviceManagementPage';
 import LogManagementPage from './pages/LogManagementPage';
 import UserManagementPage from './pages/UserManagementPage';
@@ -27,11 +26,10 @@ function App() {
 
                     <Route path="/" element={<DashboardLayout />}>
                         <Route element={<ProtectedRoute />}>
-                            <Route path="dashboard" element={<DashboardPage />} />
                             <Route path="devices" element={<DeviceManagementPage />} />
                             <Route path="logs" element={<LogManagementPage />} />
                             <Route path="users" element={<UserManagementPage />} />
-                            <Route index element={<Navigate to="/dashboard" />} />
+                            <Route index element={<Navigate to="/devices" />} />
                         </Route>
                     </Route>
 
