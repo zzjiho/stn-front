@@ -21,6 +21,7 @@ export interface DeviceRequest {
 export interface DeviceResponse {
   deviceId: number;
   title: string;
+  modelName: string;
   regDate: string;
 }
 

@@ -43,6 +43,7 @@ export const createDeviceTableColumns = ({
             <Checkbox
                 checked={isRowSelected(params.row.deviceId)}
                 onChange={(e) => onSelectRow(params.row.deviceId, e.target.checked)}
+                onClick={(e) => e.stopPropagation()}
             />
         ),
     },
@@ -155,7 +156,10 @@ export const createDeviceTableColumns = ({
         renderCell: (params: GridRenderCellParams) => (
             <Box>
                 <IconButton
-                    onClick={() => onDeleteDevice(params.row.deviceId)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteDevice(params.row.deviceId);
+                    }}
                     color="error"
                     size="small"
                 >

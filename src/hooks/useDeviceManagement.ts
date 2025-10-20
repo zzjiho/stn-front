@@ -4,7 +4,7 @@ import {deviceService} from '../services/deviceService';
 import {useDeviceSelection} from './useDeviceSelection';
 import {usePagination} from './usePagination';
 
-export function useDeviceManagement() {
+export function useDeviceManagement(skipInitialFetch = false) {
 
     // 데이터 상태
     const [devices, setDevices] = useState<Device[]>([]);
@@ -17,6 +17,9 @@ export function useDeviceManagement() {
     // 검색 상태
     const [searchType, setSearchType] = useState<'all' | 'title' | 'modelName'>('all');
     const [searchKeyword, setSearchKeyword] = useState<string>('');
+
+    // 초기 로딩 제어
+    const [isInitialLoad, setIsInitialLoad] = useState(skipInitialFetch);
 
     // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -74,8 +77,12 @@ export function useDeviceManagement() {
     }, [currentPageNo, sizePerPage, orderType, order, searchType, searchKeyword, setPaginationData]);
 
     useEffect(() => {
+        if (isInitialLoad) {
+            setIsInitialLoad(false);
+            return;
+        }
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, isInitialLoad]);
 
     const handleAddDevice = async (deviceData: DeviceRequest) => {
         const result = await deviceService.createDevice(deviceData).catch(() => null);

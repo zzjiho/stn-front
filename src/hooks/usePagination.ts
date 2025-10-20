@@ -10,7 +10,7 @@ export function usePagination(initialPage = 1, initialSize = 10) {
     const [sizePerPage, setSizePerPage] = useState(initialSize);
     const [totalCnt, setTotalCnt] = useState(0);
 
-    const handlePageChange = useCallback((_event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = useCallback((_event: React.ChangeEvent<unknown> | null, page: number) => {
         setCurrentPageNo(page);
     }, []);
 

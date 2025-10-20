@@ -1,16 +1,30 @@
 import { Box, TextField, Select, MenuItem, FormControl, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export type DeviceSearchType = 'all' | 'title' | 'modelName';
 
 interface DeviceSearchBarProps {
     onSearch: (searchType: DeviceSearchType, keyword: string) => void;
+    initialSearchType?: DeviceSearchType;
+    initialKeyword?: string;
 }
 
-export function DeviceSearchBar({ onSearch }: DeviceSearchBarProps) {
-    const [searchType, setSearchType] = useState<DeviceSearchType>('all');
-    const [keyword, setKeyword] = useState('');
+export function DeviceSearchBar({
+    onSearch,
+    initialSearchType = 'all',
+    initialKeyword = ''
+}: DeviceSearchBarProps) {
+    const [searchType, setSearchType] = useState<DeviceSearchType>(initialSearchType);
+    const [keyword, setKeyword] = useState(initialKeyword);
+
+    useEffect(() => {
+        setSearchType(initialSearchType);
+    }, [initialSearchType]);
+
+    useEffect(() => {
+        setKeyword(initialKeyword);
+    }, [initialKeyword]);
 
     const handleSearch = () => {
         onSearch(searchType, keyword);

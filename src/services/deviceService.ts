@@ -14,6 +14,10 @@ export const deviceService = {
         return api.get('/devices', {params});
     },
 
+    getDevice: async (deviceId: number): Promise<ApiResponse<DeviceResponse>> => {
+        return api.get(`/devices/${deviceId}`);
+    },
+
     createDevice: async (deviceData: DeviceRequest): Promise<ApiResponse<DeviceResponse>> => {
         return api.post('/devices', deviceData);
     },

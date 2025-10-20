@@ -4,11 +4,68 @@
  */
 import {Box, Pagination, Typography} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
+import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useEffect} from 'react';
 import {createDeviceTableColumns, DeviceActions, DeviceDialog, DeviceSearchBar} from '../components';
 import {useDeviceManagement} from '../hooks/useDeviceManagement';
 
 export default function DeviceManagementPage() {
-    const dm = useDeviceManagement();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const hasQueryParams = searchParams.toString().length > 0;
+    const dm = useDeviceManagement(hasQueryParams);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const page = searchParams.get('page');
+        const keyword = searchParams.get('keyword');
+        const title = searchParams.get('title');
+        const modelName = searchParams.get('modelName');
+        const orderType = searchParams.get('orderType');
+        const order = searchParams.get('order');
+
+        if (page || keyword || title || modelName || orderType || order) {
+            // 검색 상태 복원
+            if (keyword) {
+                dm.handleSearch('all', keyword);
+            } else if (title) {
+                dm.handleSearch('title', title);
+            } else if (modelName) {
+                dm.handleSearch('modelName', modelName);
+            }
+
+            // 정렬 상태 복원
+            if (orderType) {
+                dm.handleSortChange(orderType);
+            }
+
+            // 페이지 복원
+            if (page) {
+                dm.handlePageChange(null, parseInt(page));
+            }
+
+            setSearchParams({}, { replace: true });
+        }
+    }, []);
+
+    const handleRowClick = (deviceId: number) => {
+        console.log('🖱️ Row clicked! Device ID:', deviceId);
+        const params = new URLSearchParams({
+            page: dm.currentPageNo.toString(),
+            orderType: dm.orderType,
+            order: dm.order,
+        });
+
+        if (dm.searchKeyword) {
+            if (dm.searchType === 'all') {
+                params.append('keyword', dm.searchKeyword);
+            } else {
+                params.append(dm.searchType, dm.searchKeyword);
+            }
+        }
+
+        navigate(`/devices/${deviceId}?${params.toString()}`);
+    };
 
     const columns = createDeviceTableColumns({
         onSelectRow: dm.handleSelectRow,
@@ -35,16 +92,26 @@ export default function DeviceManagementPage() {
                 onBulkDelete={dm.handleBulkDelete}
             />
 
-            <DeviceSearchBar onSearch={dm.handleSearch} />
+            <DeviceSearchBar
+                onSearch={dm.handleSearch}
+                initialSearchType={dm.searchType}
+                initialKeyword={dm.searchKeyword}
+            />
 
             <DataGrid
                 rows={dm.devices}
                 columns={columns}
                 loading={dm.isLoading}
                 getRowId={(row) => row.deviceId}
+                onRowClick={(params) => handleRowClick(params.row.deviceId)}
                 hideFooter
                 autoHeight
-                sx={{ mb: 2 }}
+                sx={{
+                    mb: 2,
+                    '& .MuiDataGrid-row': {
+                        cursor: 'pointer'
+                    }
+                }}
             />
 
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 2}}>

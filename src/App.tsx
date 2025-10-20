@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DashboardLayout, ProtectedRoute } from './components';
 import DeviceManagementPage from './pages/DeviceManagementPage';
+import DeviceDetailPage from './pages/DeviceDetailPage';
 import LogManagementPage from './pages/LogManagementPage';
 import UserManagementPage from './pages/UserManagementPage';
 import LoginPage from './pages/LoginPage';
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/" element={<DashboardLayout />}>
                         <Route element={<ProtectedRoute />}>
                             <Route path="devices" element={<DeviceManagementPage />} />
+                            <Route path="devices/:deviceId" element={<DeviceDetailPage />} />
                             <Route path="logs" element={<LogManagementPage />} />
                             <Route path="users" element={<UserManagementPage />} />
                             <Route index element={<Navigate to="/devices" />} />
