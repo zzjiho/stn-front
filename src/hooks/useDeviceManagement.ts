@@ -14,6 +14,10 @@ export function useDeviceManagement() {
     const [orderType, setOrderType] = useState<string>('regDate');
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
+    // 검색 상태
+    const [searchType, setSearchType] = useState<'all' | 'title' | 'modelName'>('all');
+    const [searchKeyword, setSearchKeyword] = useState<string>('');
+
     // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -42,11 +46,22 @@ export function useDeviceManagement() {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
 
+        // 검색 파라미터 구성
+        const searchParams: Record<string, string> = {};
+        if (searchKeyword.trim()) {
+            if (searchType === 'all') {
+                searchParams.keyword = searchKeyword;
+            } else {
+                searchParams[searchType] = searchKeyword;
+            }
+        }
+
         const response = await deviceService.getDevices({
             page: currentPageNo,
             size: sizePerPage,
             orderType,
-            order
+            order,
+            ...searchParams
         }).catch(() => null);
 
         if (response) {
@@ -56,7 +71,7 @@ export function useDeviceManagement() {
         }
 
         setIsLoading(false);
-    }, [currentPageNo, sizePerPage, orderType, order, setPaginationData]);
+    }, [currentPageNo, sizePerPage, orderType, order, searchType, searchKeyword, setPaginationData]);
 
     useEffect(() => {
         fetchData();
@@ -119,6 +134,11 @@ export function useDeviceManagement() {
         }
     };
 
+    const handleSearch = (type: 'all' | 'title' | 'modelName', keyword: string) => {
+        setSearchType(type);
+        setSearchKeyword(keyword);
+    };
+
     return {
         // 데이터
         devices,
@@ -131,6 +151,11 @@ export function useDeviceManagement() {
         orderType,
         order,
         handleSortChange,
+
+        // 검색
+        searchType,
+        searchKeyword,
+        handleSearch,
 
         // 추가 다이얼로그
         addDialogOpen,

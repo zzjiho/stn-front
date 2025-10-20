@@ -4,7 +4,7 @@
  */
 import {Box, Pagination, Typography} from '@mui/material';
 import {DataGrid} from '@mui/x-data-grid';
-import {createDeviceTableColumns, DeviceActions, DeviceDialog} from '../components';
+import {createDeviceTableColumns, DeviceActions, DeviceDialog, DeviceSearchBar} from '../components';
 import {useDeviceManagement} from '../hooks/useDeviceManagement';
 
 export default function DeviceManagementPage() {
@@ -34,6 +34,8 @@ export default function DeviceManagementPage() {
                 onEdit={dm.handleEditOpen}
                 onBulkDelete={dm.handleBulkDelete}
             />
+
+            <DeviceSearchBar onSearch={dm.handleSearch} />
 
             <DataGrid
                 rows={dm.devices}

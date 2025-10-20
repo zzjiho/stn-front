@@ -9,3 +9,6 @@ export * from './table';
 
 // Layout
 export * from './layout';
+
+// Search
+export * from './search';
