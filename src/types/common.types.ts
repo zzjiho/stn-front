@@ -17,6 +17,6 @@ export interface PaginationParams {
 
 // 정렬
 export interface SortParams {
-  sortBy?: string;
-  sortDir?: 'ASC' | 'DESC';
+  orderType?: string;
+  order?: 'asc' | 'desc';
 }

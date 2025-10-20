@@ -13,8 +13,8 @@ export function useLogManagement() {
     const [isLoading, setIsLoading] = useState(false);
 
     // 정렬 상태
-    const sortBy = 'regDate';
-    const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('DESC');
+    const [orderType, setOrderType] = useState<string>('regDate');
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
     // 다이얼로그 상태
     const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -48,8 +48,8 @@ export function useLogManagement() {
         const response = await logService.getLogs({
             page: currentPageNo,
             size: sizePerPage,
-            sortBy,
-            sortDir
+            orderType,
+            order
         }).catch(() => null);
 
         if (response) {
@@ -59,7 +59,7 @@ export function useLogManagement() {
         }
 
         setIsLoading(false);
-    }, [currentPageNo, sizePerPage, sortDir, setPaginationData]);
+    }, [currentPageNo, sizePerPage, orderType, order, setPaginationData]);
 
     useEffect(() => {
         fetchData();
@@ -121,8 +121,13 @@ export function useLogManagement() {
         }
     };
 
-    const handleSortChange = (newSortDir: 'ASC' | 'DESC') => {
-        setSortDir(newSortDir);
+    const handleSortChange = (newOrderType: string) => {
+        if (orderType === newOrderType) {
+            setOrder(order === 'desc' ? 'asc' : 'desc');
+        } else {
+            setOrderType(newOrderType);
+            setOrder('desc');
+        }
     };
 
     return {
@@ -135,8 +140,8 @@ export function useLogManagement() {
         totalCnt,
 
         // 정렬
-        sortBy,
-        sortDir,
+        orderType,
+        order,
         handleSortChange,
 
         // 추가 다이얼로그

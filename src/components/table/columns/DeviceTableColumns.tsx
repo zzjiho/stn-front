@@ -10,8 +10,9 @@ export interface DeviceTableColumnsProps {
     isRowSelected: (deviceId: number) => boolean;
     isAllSelected: () => boolean;
     isIndeterminate: () => boolean;
-    sortDir: 'ASC' | 'DESC';
-    onSortChange: (sortDir: 'ASC' | 'DESC') => void;
+    orderType: string;
+    order: 'asc' | 'desc';
+    onSortChange: (orderType: string) => void;
 }
 
 export const createDeviceTableColumns = ({
@@ -21,7 +22,8 @@ export const createDeviceTableColumns = ({
     isRowSelected,
     isAllSelected,
     isIndeterminate,
-    sortDir,
+    orderType,
+    order,
     onSortChange
 }: DeviceTableColumnsProps): GridColDef[] => [
     {
@@ -49,14 +51,66 @@ export const createDeviceTableColumns = ({
         headerName: '장치명',
         flex: 1.5,
         minWidth: 200,
-        sortable: false
+        sortable: false,
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('title')}
+            >
+                <span>장치명</span>
+                {orderType === 'title' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'modelName',
         headerName: '모델명',
         flex: 1.2,
         minWidth: 150,
-        sortable: false
+        sortable: false,
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('modelName')}
+            >
+                <span>모델명</span>
+                {orderType === 'modelName' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'regDate',
@@ -76,17 +130,19 @@ export const createDeviceTableColumns = ({
                         opacity: 0.7
                     }
                 }}
-                onClick={() => onSortChange(sortDir === 'DESC' ? 'ASC' : 'DESC')}
+                onClick={() => onSortChange('regDate')}
             >
                 <span>등록일</span>
-                <ArrowDownwardIcon
-                    sx={{
-                        ml: 0.5,
-                        fontSize: 18,
-                        transform: sortDir === 'ASC' ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 0.2s'
-                    }}
-                />
+                {orderType === 'regDate' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
             </Box>
         )
     },

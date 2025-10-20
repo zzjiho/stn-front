@@ -14,8 +14,9 @@ export interface LogTableColumnsProps {
     isRowSelected: (usageId: number) => boolean;
     isAllSelected: () => boolean;
     isIndeterminate: () => boolean;
-    sortDir: 'ASC' | 'DESC';
-    onSortChange: (sortDir: 'ASC' | 'DESC') => void;
+    orderType: string;
+    order: 'asc' | 'desc';
+    onSortChange: (orderType: string) => void;
 }
 
 export const createLogTableColumns = ({
@@ -25,7 +26,8 @@ export const createLogTableColumns = ({
     isRowSelected,
     isAllSelected,
     isIndeterminate,
-    sortDir,
+    orderType,
+    order,
     onSortChange
 }: LogTableColumnsProps): GridColDef[] => [
     {
@@ -53,7 +55,33 @@ export const createLogTableColumns = ({
         headerName: '장치명',
         flex: 1.2,
         minWidth: 150,
-        sortable: false
+        sortable: false,
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('title')}
+            >
+                <span>장치명</span>
+                {orderType === 'title' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'cpuUsage',
@@ -63,7 +91,33 @@ export const createLogTableColumns = ({
         minWidth: 130,
         sortable: false,
         align: 'left',
-        headerAlign: 'left'
+        headerAlign: 'left',
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('cpuUsage')}
+            >
+                <span>CPU 사용률 (%)</span>
+                {orderType === 'cpuUsage' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'memoryUsage',
@@ -73,7 +127,33 @@ export const createLogTableColumns = ({
         minWidth: 150,
         sortable: false,
         align: 'left',
-        headerAlign: 'left'
+        headerAlign: 'left',
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('memoryUsage')}
+            >
+                <span>메모리 사용률 (%)</span>
+                {orderType === 'memoryUsage' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'diskUsage',
@@ -83,7 +163,33 @@ export const createLogTableColumns = ({
         minWidth: 150,
         sortable: false,
         align: 'left',
-        headerAlign: 'left'
+        headerAlign: 'left',
+        renderHeader: () => (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    '&:hover': {
+                        opacity: 0.7
+                    }
+                }}
+                onClick={() => onSortChange('diskUsage')}
+            >
+                <span>디스크 사용률 (%)</span>
+                {orderType === 'diskUsage' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
+            </Box>
+        )
     },
     {
         field: 'regDate',
@@ -103,17 +209,19 @@ export const createLogTableColumns = ({
                         opacity: 0.7
                     }
                 }}
-                onClick={() => onSortChange(sortDir === 'DESC' ? 'ASC' : 'DESC')}
+                onClick={() => onSortChange('regDate')}
             >
                 <span>등록일</span>
-                <ArrowDownwardIcon
-                    sx={{
-                        ml: 0.5,
-                        fontSize: 18,
-                        transform: sortDir === 'ASC' ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 0.2s'
-                    }}
-                />
+                {orderType === 'regDate' && (
+                    <ArrowDownwardIcon
+                        sx={{
+                            ml: 0.5,
+                            fontSize: 18,
+                            transform: order === 'asc' ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                )}
             </Box>
         )
     },

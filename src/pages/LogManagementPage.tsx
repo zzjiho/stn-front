@@ -18,7 +18,8 @@ export default function LogManagementPage() {
         isRowSelected: lm.isRowSelected,
         isAllSelected: lm.isAllSelected,
         isIndeterminate: lm.isIndeterminate,
-        sortDir: lm.sortDir,
+        orderType: lm.orderType,
+        order: lm.order,
         onSortChange: lm.handleSortChange,
     });
 
