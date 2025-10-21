@@ -2,6 +2,7 @@ import {Box, Checkbox, IconButton} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type {GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
+import type {OrderType, Order} from '../../../utils/deviceStateUtils';
 
 export interface DeviceTableColumnsProps {
     onSelectRow: (deviceId: number, checked: boolean) => void;
@@ -10,9 +11,9 @@ export interface DeviceTableColumnsProps {
     isRowSelected: (deviceId: number) => boolean;
     isAllSelected: () => boolean;
     isIndeterminate: () => boolean;
-    orderType: string;
-    order: 'asc' | 'desc';
-    onSortChange: (orderType: string) => void;
+    orderType: OrderType;
+    order: Order;
+    onSortChange: (orderType: OrderType) => void;
 }
 
 export const createDeviceTableColumns = ({

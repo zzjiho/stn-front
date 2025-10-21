@@ -1,8 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
-import type {Device, DeviceRequest} from '../types/index';
+import type {Device, DeviceRequest} from '../types';
 import {deviceService} from '../services/deviceService';
 import {useDeviceSelection} from './useDeviceSelection';
 import {usePagination} from './usePagination';
+import type {OrderType, Order, DeviceSearchType, DevicePageState} from '../utils/deviceStateUtils';
 
 export function useDeviceManagement(skipInitialFetch = false) {
 
@@ -11,11 +12,11 @@ export function useDeviceManagement(skipInitialFetch = false) {
     const [isLoading, setIsLoading] = useState(false);
 
     // 정렬 상태
-    const [orderType, setOrderType] = useState<string>('regDate');
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+    const [orderType, setOrderType] = useState<OrderType>('regDate');
+    const [order, setOrder] = useState<Order>('desc');
 
     // 검색 상태
-    const [searchType, setSearchType] = useState<'all' | 'title' | 'modelName'>('all');
+    const [searchType, setSearchType] = useState<DeviceSearchType>('all');
     const [searchKeyword, setSearchKeyword] = useState<string>('');
 
     // 초기 로딩 제어
@@ -32,7 +33,8 @@ export function useDeviceManagement(skipInitialFetch = false) {
         sizePerPage,
         totalCnt,
         handlePageChange,
-        setPaginationData
+        setPaginationData,
+        resetPage
     } = usePagination();
 
     // 행 선택 기능 (체크박스)
@@ -132,7 +134,7 @@ export function useDeviceManagement(skipInitialFetch = false) {
         }
     };
 
-    const handleSortChange = (newOrderType: string) => {
+    const handleSortChange = (newOrderType: OrderType) => {
         if (orderType === newOrderType) {
             setOrder(order === 'desc' ? 'asc' : 'desc');
         } else {
@@ -141,9 +143,30 @@ export function useDeviceManagement(skipInitialFetch = false) {
         }
     };
 
-    const handleSearch = (type: 'all' | 'title' | 'modelName', keyword: string) => {
+    const handleSearch = (type: DeviceSearchType, keyword: string) => {
         setSearchType(type);
         setSearchKeyword(keyword);
+        resetPage();
+    };
+
+    // URL 파라미터에서 상태 복원
+    const restorePageState = (state: DevicePageState) => {
+        if (state.searchType && state.searchKeyword) {
+            setSearchType(state.searchType);
+            setSearchKeyword(state.searchKeyword);
+        }
+
+        if (state.orderType) {
+            setOrderType(state.orderType);
+        }
+
+        if (state.order) {
+            setOrder(state.order);
+        }
+
+        if (state.page) {
+            handlePageChange(null, state.page);
+        }
     };
 
     return {
@@ -163,6 +186,9 @@ export function useDeviceManagement(skipInitialFetch = false) {
         searchType,
         searchKeyword,
         handleSearch,
+
+        // 상태 복원
+        restorePageState,
 
         // 추가 다이얼로그
         addDialogOpen,

@@ -24,6 +24,10 @@ export function usePagination(initialPage = 1, initialSize = 10) {
         setSizePerPage(size);
     }, []);
 
+    const resetPage = useCallback(() => {
+        setCurrentPageNo(1);
+    }, []);
+
     return {
         // 상태 값
         currentPageNo,    // 현재 페이지 번호
@@ -33,5 +37,6 @@ export function usePagination(initialPage = 1, initialSize = 10) {
         // 핸들러
         handlePageChange,
         setPaginationData,
+        resetPage,
     };
 }
